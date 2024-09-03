@@ -1,6 +1,7 @@
 package com.wiemanboy.cnsdbankapplication.domain;
 
 import com.wiemanboy.cnsdbankapplication.domain.enums.AccountStatus;
+import com.wiemanboy.cnsdbankapplication.domain.exception.TooLittleCustomersInBankAccountException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -58,7 +59,7 @@ public class BankAccount {
 
     public void removeCustomer(Customer customer) {
         if (customers.size() <= 1) {
-            throw new RuntimeException("BankAccount needs at least 1 customer");
+            throw new TooLittleCustomersInBankAccountException(1);
         }
         customers.remove(customer);
     }
