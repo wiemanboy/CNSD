@@ -5,6 +5,7 @@ import com.wiemanboy.cnsdbankapplication.presentation.dto.request.BankAccountCre
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.BankAccountUpdateCustomerDTO;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.BankAccountUpdateDTO;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.response.BankAccountDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class BankAccountController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public BankAccountDTO createBankAccount(@RequestBody BankAccountCreateDTO bankAccountCreateDTO) {
         return BankAccountDTO.from(bankAccountService.createBankAccountForCustomer(bankAccountCreateDTO.customerId()));
     }

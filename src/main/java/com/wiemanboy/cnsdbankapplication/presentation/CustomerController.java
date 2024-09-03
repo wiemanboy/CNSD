@@ -4,6 +4,7 @@ import com.wiemanboy.cnsdbankapplication.application.CustomerService;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.CustomerCreateDTO;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.CustomerUpdateDTO;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.response.CustomerDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class CustomerController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public CustomerDTO createCustomer(@RequestBody CustomerCreateDTO customerCreateDTO) {
         return CustomerDTO.from(customerService.createCustomer(customerCreateDTO.name()));
     }
