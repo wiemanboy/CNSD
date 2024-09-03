@@ -13,4 +13,6 @@ public interface CustomerRepository extends JpaRepository<Customer, UUID> {
     Optional<Customer> findCustomerById(UUID id);
 
     List<Customer> findCustomers();
+
+    Optional<Customer> removeCustomerById(UUID id);
 }
