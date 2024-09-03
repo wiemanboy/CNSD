@@ -1,6 +1,49 @@
 # CNSD Jarno Wieman #1805218
 
+## Docs
+
+This project includes [a swagger ui](http://localhost:8080/docs) to view the API documentation.
+
+## Layer model
+
+In the slides a three-layer architecture is given; however, I am used to working with a four-layer architecture.
+I prefer the four-layer architecture as it gives more separation between your business logic and saving data
+(single responsibility).
+If this is a problem, please let me know.
+
+```mermaid
+classDiagram
+    controller --> dto
+    controller --> exceptionHandler
+    controller --> service
+    service --> entity
+    service --> repository
+    entity --> exception
+    service --> exception
+
+    namespace presentation___web {
+        class controller
+        class dto
+        class exceptionHandler
+    }
+
+    namespace application___domain {
+        class service
+    }
+
+    namespace domain {
+        class entity
+        class exception
+    }
+
+    namespace data {
+        class repository
+    }
+
+```
+
 ## Leerdoelen
+
 - Met AWS werken
 - Designen voor de cloud
 - NoSQL (Dit is slecht gedaan bij INNO)
