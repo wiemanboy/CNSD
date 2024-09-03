@@ -32,6 +32,10 @@ public class BankAccount {
         addCustomer(customer);
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     public List<Customer> getCustomers() {
         return customers;
     }

@@ -67,7 +67,7 @@ public class BankAccountService {
         return bankAccount;
     }
 
-    public BankAccount removeBankAccountById(UUID bankAccountId) {
+    public BankAccount deleteBankAccountById(UUID bankAccountId) {
         return bankAccountRepository.removeBankAccountById(bankAccountId).orElse(null);
     }
 }
