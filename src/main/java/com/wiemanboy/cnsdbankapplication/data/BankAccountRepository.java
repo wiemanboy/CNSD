@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> {
     Optional<BankAccount> findBankAccountById(UUID id);
 
-    List<BankAccount> findBankAccounts();
+    List<BankAccount> findAll();
 
     Optional<BankAccount> removeBankAccountById(UUID id);
 }

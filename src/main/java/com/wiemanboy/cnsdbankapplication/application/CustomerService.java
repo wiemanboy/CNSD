@@ -33,7 +33,7 @@ public class CustomerService {
     }
 
     public List<Customer> getCustomers() {
-        return customerRepository.findCustomers();
+        return customerRepository.findAll();
     }
 
     public Customer updateCustomerById(UUID id, String name) {

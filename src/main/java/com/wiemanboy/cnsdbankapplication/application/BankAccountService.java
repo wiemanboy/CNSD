@@ -37,7 +37,7 @@ public class BankAccountService {
     }
 
     public List<BankAccount> getBankAccounts() {
-        return bankAccountRepository.findBankAccounts();
+        return bankAccountRepository.findAll();
     }
 
     public BankAccount updateBankAccountById(UUID bankAccountId, AccountStatus status) {
