@@ -1,19 +1,17 @@
 package com.wiemanboy.cnsdbankapplication.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter
-public class Customer extends TimeStamped {
-    @Id
-    @GeneratedValue
-    private UUID id;
-
+public class Customer extends DBObject {
     @Setter
     private String name;
 
