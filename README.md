@@ -29,6 +29,17 @@ classDiagram
 ### ERD
 
 ```mermaid
+erDiagram
+    bank_account }o--o{ customer: "has"
+    bank_account {
+        UUID id
+        int value
+        AccountStatus status
+    }
+    customer {
+        UUID id
+        String name
+    }
 ```
 
 ### Layer model
