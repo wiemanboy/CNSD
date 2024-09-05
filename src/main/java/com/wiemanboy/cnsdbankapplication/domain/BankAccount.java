@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +18,16 @@ import java.util.UUID;
  * Also includes the value of the account and the status of the account.
  */
 @Entity
-public class BankAccount {
+@Getter
+public class BankAccount extends TimeStamped {
     @Id
     @GeneratedValue
     private UUID id;
 
     @ManyToMany
     private List<Customer> customers = new ArrayList<Customer>();
+
+    @Setter
     private AccountStatus status = AccountStatus.OPEN;
     private int value = 0;
 
@@ -31,26 +36,6 @@ public class BankAccount {
 
     public BankAccount(Customer customer) {
         addCustomer(customer);
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public List<Customer> getCustomers() {
-        return customers;
-    }
-
-    public AccountStatus getStatus() {
-        return status;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setStatus(AccountStatus status) {
-        this.status = status;
     }
 
     public void addCustomer(Customer customer) {
