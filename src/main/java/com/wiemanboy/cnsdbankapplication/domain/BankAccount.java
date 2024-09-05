@@ -2,10 +2,7 @@ package com.wiemanboy.cnsdbankapplication.domain;
 
 import com.wiemanboy.cnsdbankapplication.domain.enums.AccountStatus;
 import com.wiemanboy.cnsdbankapplication.domain.exception.TooLittleCustomersInBankAccountException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +22,11 @@ public class BankAccount extends TimeStamped {
     private UUID id;
 
     @ManyToMany
+    @JoinTable(
+            name = "bank_account_customers",
+            joinColumns = @JoinColumn(name = "bank_account_id"),
+            inverseJoinColumns = @JoinColumn(name = "customer_id")
+    )
     private List<Customer> customers = new ArrayList<Customer>();
 
     @Setter

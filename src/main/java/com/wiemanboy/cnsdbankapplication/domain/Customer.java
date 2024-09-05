@@ -1,9 +1,6 @@
 package com.wiemanboy.cnsdbankapplication.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +18,11 @@ public class Customer extends TimeStamped {
     private String name;
 
     @ManyToMany
+    @JoinTable(
+            name = "bank_account_customers",
+            joinColumns = @JoinColumn(name = "bank_account_id"),
+            inverseJoinColumns = @JoinColumn(name = "customer_id")
+    )
     private List<BankAccount> bankAccounts;
 
     protected Customer() {
