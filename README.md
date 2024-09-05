@@ -4,7 +4,34 @@
 
 This project includes [a swagger ui](http://localhost:8080/docs) to view the API documentation.
 
-## Layer model
+## Models
+
+### Domain model
+
+```mermaid
+classDiagram
+    BankAccount "*" <--> "1...*" Customer
+
+    class BankAccount {
+        - id: UUID
+        - value: int
+        - customers: List<Customer>
+        - status: AccountStatus
+    }
+
+    class Customer {
+        - id: UUID
+        - name: String
+        - bankAccounts: List<BankAccount>
+    }
+```
+
+### ERD
+
+```mermaid
+```
+
+### Layer model
 
 In the slides a three-layer architecture is given; however, I am used to working with a four-layer architecture.
 I prefer the four-layer architecture as it gives more separation between your business logic and saving data
