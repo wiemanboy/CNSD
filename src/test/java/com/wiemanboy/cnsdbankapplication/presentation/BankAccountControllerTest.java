@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Description;
 
 import java.util.List;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -120,5 +120,13 @@ class BankAccountControllerTest {
 
         assertInstanceOf(BankAccountDTO.class, result);
         assertEquals(bankAccount.getId(), result.id());
+    }
+
+    @Test
+    @Description("Test delete bank account by id returns null")
+    void testDeleteBankAccountReturnsNull() {
+        BankAccountDTO result = bankAccountController.deleteBankAccount(UUID.randomUUID());
+
+        assertNull(result);
     }
 }

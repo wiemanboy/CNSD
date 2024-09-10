@@ -19,7 +19,7 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> 
     List<BankAccount> findAll();
 
     @CacheEvict(value = {"bankAccount", "bankAccounts"})
-    Optional<BankAccount> removeBankAccountById(UUID id);
+    void removeBankAccountById(UUID id);
 
     @CacheEvict(value = {"bankAccount", "bankAccounts"})
     BankAccount save(BankAccount bankAccount);

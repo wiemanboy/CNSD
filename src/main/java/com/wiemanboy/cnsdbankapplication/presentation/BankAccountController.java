@@ -1,6 +1,7 @@
 package com.wiemanboy.cnsdbankapplication.presentation;
 
 import com.wiemanboy.cnsdbankapplication.application.BankAccountService;
+import com.wiemanboy.cnsdbankapplication.domain.BankAccount;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.BankAccountCreateDTO;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.BankAccountUpdateCustomerDTO;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.BankAccountUpdateDTO;
@@ -54,6 +55,10 @@ public class BankAccountController {
 
     @DeleteMapping("/{id}")
     public BankAccountDTO deleteBankAccount(@PathVariable UUID id) {
-        return BankAccountDTO.from(bankAccountService.deleteBankAccountById(id));
+        BankAccount bankAccount = bankAccountService.deleteBankAccountById(id);
+        if (bankAccount == null) {
+            return null;
+        }
+        return BankAccountDTO.from(bankAccount);
     }
 }

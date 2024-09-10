@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Description;
 
 import java.util.List;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -91,5 +91,13 @@ class CustomerControllerTest {
 
         assertInstanceOf(CustomerDTO.class, result);
         assertEquals(customer.getName(), result.name());
+    }
+
+    @Test
+    @Description("Test delete customer by id returns null")
+    void testDeleteCustomerByIdReturnsNull() {
+        CustomerDTO result = customerController.deleteCustomerById(UUID.randomUUID());
+
+        assertNull(result);
     }
 }

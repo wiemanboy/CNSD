@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -68,6 +69,11 @@ public class BankAccountService {
     }
 
     public BankAccount deleteBankAccountById(UUID bankAccountId) {
-        return bankAccountRepository.removeBankAccountById(bankAccountId).orElse(null);
+        Optional<BankAccount> bankAccount = bankAccountRepository.findBankAccountById(bankAccountId);
+        if (bankAccount.isEmpty()) {
+            return null;
+        }
+        bankAccountRepository.removeBankAccountById(bankAccountId);
+        return bankAccount.get();
     }
 }

@@ -156,7 +156,7 @@ class BankAccountServiceTest {
     public void testDeleteBankAccountById() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
-        when(bankAccountRepository.removeBankAccountById(null)).thenReturn(Optional.of(bankAccount));
+        when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
 
         BankAccount result = bankAccountService.deleteBankAccountById(null);
 
@@ -167,11 +167,10 @@ class BankAccountServiceTest {
     @Test
     @Description("Test if BankAccount is deleted by ID returns null")
     public void testDeleteBankAccountByIdReturnsNull() {
-        when(bankAccountRepository.removeBankAccountById(null)).thenReturn(Optional.empty());
+        when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.empty());
 
         BankAccount result = bankAccountService.deleteBankAccountById(null);
 
-        verify(bankAccountRepository).removeBankAccountById(null);
         assertNull(result);
     }
 }

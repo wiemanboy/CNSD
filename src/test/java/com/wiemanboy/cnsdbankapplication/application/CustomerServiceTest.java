@@ -89,7 +89,8 @@ class CustomerServiceTest {
     @Description("Test if Customer is deleted by ID")
     public void testDeleteCustomerById() {
         Customer customer = new Customer("test");
-        when(customerRepository.removeCustomerById(null)).thenReturn(Optional.of(customer));
+
+        when(customerRepository.findCustomerById(null)).thenReturn(Optional.of(customer));
 
         Customer result = customerService.deleteCustomerById(null);
 
@@ -100,7 +101,7 @@ class CustomerServiceTest {
     @Test
     @Description("Test if Customer is not deleted by ID and returns null")
     public void testDeleteCustomerByIdReturnsNull() {
-        when(customerRepository.removeCustomerById(null)).thenReturn(Optional.empty());
+        when(customerRepository.findCustomerById(null)).thenReturn(Optional.empty());
 
         Customer result = customerService.deleteCustomerById(null);
 

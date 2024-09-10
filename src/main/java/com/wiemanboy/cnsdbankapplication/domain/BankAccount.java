@@ -2,10 +2,7 @@ package com.wiemanboy.cnsdbankapplication.domain;
 
 import com.wiemanboy.cnsdbankapplication.domain.enums.AccountStatus;
 import com.wiemanboy.cnsdbankapplication.domain.exception.TooLittleCustomersInBankAccountException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 public class BankAccount extends DBObject {
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "bank_account_customers",
             joinColumns = @JoinColumn(name = "customer_id"),

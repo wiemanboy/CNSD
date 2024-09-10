@@ -11,7 +11,6 @@ import com.wiemanboy.cnsdbankapplication.presentation.dto.request.BankAccountCre
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.BankAccountUpdateCustomerDTO;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.BankAccountUpdateDTO;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -120,7 +119,6 @@ public class BankAccountControllerIntegrationTest {
     }
 
     @Test
-    @Disabled("Dont know why this test is failing")
     void testDeleteBankAccount() throws Exception {
         Customer customer = customerRepository.save(new Customer("test"));
         BankAccount bankAccount = bankAccountRepository.save((new BankAccountBuilder()).setCustomer(customer).build());

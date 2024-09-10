@@ -19,7 +19,7 @@ public interface CustomerRepository extends JpaRepository<Customer, UUID> {
     List<Customer> findAll();
 
     @CacheEvict(value = {"customer", "customers"})
-    Optional<Customer> removeCustomerById(UUID id);
+    void removeCustomerById(UUID id);
 
     @CacheEvict(value = {"customer", "customers"})
     Customer save(Customer customer);

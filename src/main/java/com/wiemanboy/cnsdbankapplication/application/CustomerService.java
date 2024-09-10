@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -46,6 +47,11 @@ public class CustomerService {
     }
 
     public Customer deleteCustomerById(UUID id) {
-        return customerRepository.removeCustomerById(id).orElse(null);
+        Optional<Customer> customer = customerRepository.findCustomerById(id);
+        if (customer.isEmpty()) {
+            return null;
+        }
+        customerRepository.removeCustomerById(id);
+        return customer.get();
     }
 }

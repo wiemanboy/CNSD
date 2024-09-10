@@ -6,7 +6,6 @@ import com.wiemanboy.cnsdbankapplication.domain.Customer;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.CustomerCreateDTO;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.CustomerUpdateDTO;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -86,7 +85,6 @@ public class CustomerControllerIntegrationTest {
 
     @Test
     @Description("Test delete customer by id")
-    @Disabled("Dont know why this test is failing")
     void testDeleteCustomerById() throws Exception {
         Customer customer = customerRepository.save(new Customer("test"));
 
