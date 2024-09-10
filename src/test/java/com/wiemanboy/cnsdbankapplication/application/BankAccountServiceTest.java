@@ -36,7 +36,7 @@ class BankAccountServiceTest {
 
     @Test
     @Description("Test if BankAccount is created and saved")
-    public void createBankAccountForCustomer() {
+    public void testCreateBankAccountForCustomer() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
         when(customerService.getCustomerById(null)).thenReturn(bankAccount.getCustomers().getFirst());
@@ -50,7 +50,7 @@ class BankAccountServiceTest {
 
     @Test
     @Description("Test if BankAccount is retrieved by ID")
-    public void getBankAccountById() {
+    public void testGetBankAccountById() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
         when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
@@ -63,7 +63,7 @@ class BankAccountServiceTest {
 
     @Test
     @Description("Test if BankAccount is not retrieved by ID throws exception")
-    public void getBankAccountByIdThrowsException() {
+    public void testGetBankAccountByIdThrowsException() {
         when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.empty());
 
         assertThrows(
@@ -75,7 +75,7 @@ class BankAccountServiceTest {
 
     @Test
     @Description("Test if BankAccounts are retrieved")
-    public void getBankAccounts() {
+    public void testGetBankAccounts() {
         List<BankAccount> bankAccounts = List.of(
                 (new BankAccountBuilder()).build(),
                 (new BankAccountBuilder()).build()
@@ -91,7 +91,7 @@ class BankAccountServiceTest {
 
     @Test
     @Description("Test if BankAccount is updated by ID")
-    public void updateBankAccountById() {
+    public void testUpdateBankAccountById() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
         when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
@@ -105,7 +105,7 @@ class BankAccountServiceTest {
 
     @Test
     @Description("Test if Customer is added to BankAccount")
-    public void addCustomerToBankAccount() {
+    public void testAddCustomerToBankAccount() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
         when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
@@ -121,7 +121,7 @@ class BankAccountServiceTest {
 
     @Test
     @Description("Test if Customer is removed from BankAccount")
-    public void removeCustomerFromBankAccount() {
+    public void testRemoveCustomerFromBankAccount() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
         bankAccount.addCustomer(new Customer("test"));
 
@@ -137,7 +137,7 @@ class BankAccountServiceTest {
 
     @Test
     @Description("Test if Customer is not removed from BankAccount and throws exception")
-    public void removeCustomerFromBankAccountThrowsException() {
+    public void testRemoveCustomerFromBankAccountThrowsException() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
         when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
@@ -153,7 +153,7 @@ class BankAccountServiceTest {
 
     @Test
     @Description("Test if BankAccount is deleted by ID")
-    public void deleteBankAccountById() {
+    public void testDeleteBankAccountById() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
         when(bankAccountRepository.removeBankAccountById(null)).thenReturn(Optional.of(bankAccount));
@@ -166,7 +166,7 @@ class BankAccountServiceTest {
 
     @Test
     @Description("Test if BankAccount is deleted by ID returns null")
-    public void deleteBankAccountByIdReturnsNull() {
+    public void testDeleteBankAccountByIdReturnsNull() {
         when(bankAccountRepository.removeBankAccountById(null)).thenReturn(Optional.empty());
 
         BankAccount result = bankAccountService.deleteBankAccountById(null);

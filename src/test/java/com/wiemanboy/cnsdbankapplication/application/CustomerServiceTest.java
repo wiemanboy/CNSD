@@ -28,7 +28,7 @@ class CustomerServiceTest {
     }
 
     @Test
-    public void createCustomer() {
+    public void testCreateCustomer() {
         Customer result = customerService.createCustomer("test");
 
         verify(customerRepository).save(Mockito.any());
@@ -37,7 +37,7 @@ class CustomerServiceTest {
 
     @Test
     @Description("Test if Customer is retrieved by ID")
-    public void getCustomerById() {
+    public void testGetCustomerById() {
         Customer customer = new Customer("test");
 
         when(customerRepository.findCustomerById(null)).thenReturn(Optional.of(customer));
@@ -50,7 +50,7 @@ class CustomerServiceTest {
 
     @Test
     @Description("Test if Customer is not retrieved by ID and throws exception")
-    public void getCustomerByIdThrowsException() {
+    public void testGetCustomerByIdThrowsException() {
         when(customerRepository.findCustomerById(null)).thenReturn(Optional.empty());
 
         assertThrows(CustomerNotFoundException.class, () -> customerService.getCustomerById(null));
@@ -58,7 +58,7 @@ class CustomerServiceTest {
 
     @Test
     @Description("Test if Customers are retrieved")
-    public void getCustomers() {
+    public void testGetCustomers() {
         List<Customer> customers = List.of(
                 new Customer("test"),
                 new Customer("test2")
@@ -74,7 +74,7 @@ class CustomerServiceTest {
 
     @Test
     @Description("Test if Customer is updated by ID")
-    public void updateCustomerById() {
+    public void testUpdateCustomerById() {
         Customer customer = new Customer("test");
 
         when(customerRepository.findCustomerById(null)).thenReturn(Optional.of(customer));
@@ -87,7 +87,7 @@ class CustomerServiceTest {
 
     @Test
     @Description("Test if Customer is deleted by ID")
-    public void deleteCustomerById() {
+    public void testDeleteCustomerById() {
         Customer customer = new Customer("test");
         when(customerRepository.removeCustomerById(null)).thenReturn(Optional.of(customer));
 
@@ -99,7 +99,7 @@ class CustomerServiceTest {
 
     @Test
     @Description("Test if Customer is not deleted by ID and returns null")
-    public void deleteCustomerByIdReturnsNull() {
+    public void testDeleteCustomerByIdReturnsNull() {
         when(customerRepository.removeCustomerById(null)).thenReturn(Optional.empty());
 
         Customer result = customerService.deleteCustomerById(null);
