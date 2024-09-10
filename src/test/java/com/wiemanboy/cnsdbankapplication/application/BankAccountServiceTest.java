@@ -12,10 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Description;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class BankAccountServiceTest {
     private BankAccountService bankAccountService;
@@ -37,12 +39,13 @@ class BankAccountServiceTest {
     public void createBankAccountForCustomer() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
-        Mockito.when(customerService.getCustomerById(null)).thenReturn(bankAccount.getCustomers().getFirst());
-        Mockito.when(bankAccountRepository.save(bankAccount)).thenReturn(bankAccount);
+        when(customerService.getCustomerById(null)).thenReturn(bankAccount.getCustomers().getFirst());
+        when(bankAccountRepository.save(bankAccount)).thenReturn(bankAccount);
 
-        bankAccountService.createBankAccountForCustomer(null);
+        BankAccount result = bankAccountService.createBankAccountForCustomer(null);
 
         verify(bankAccountRepository).save(Mockito.any());
+        assertNotNull(result);
     }
 
     @Test
@@ -50,17 +53,18 @@ class BankAccountServiceTest {
     public void getBankAccountById() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
-        Mockito.when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
+        when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
 
-        bankAccountService.getBankAccountById(null);
+        BankAccount result = bankAccountService.getBankAccountById(null);
 
         verify(bankAccountRepository).findBankAccountById(null);
+        assertNotNull(result);
     }
 
     @Test
     @Description("Test if BankAccount is not retrieved by ID throws exception")
     public void getBankAccountByIdThrowsException() {
-        Mockito.when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.empty());
+        when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.empty());
 
         assertThrows(
                 BankAccountNotFoundException.class,
@@ -72,9 +76,17 @@ class BankAccountServiceTest {
     @Test
     @Description("Test if BankAccounts are retrieved")
     public void getBankAccounts() {
-        bankAccountService.getBankAccounts();
+        List<BankAccount> bankAccounts = List.of(
+                (new BankAccountBuilder()).build(),
+                (new BankAccountBuilder()).build()
+        );
+
+        when(bankAccountRepository.findAll()).thenReturn(bankAccounts);
+
+        List<BankAccount> result = bankAccountService.getBankAccounts();
 
         verify(bankAccountRepository).findAll();
+        assertEquals(2, result.size());
     }
 
     @Test
@@ -82,8 +94,8 @@ class BankAccountServiceTest {
     public void updateBankAccountById() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
-        Mockito.when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
-        Mockito.when(bankAccountRepository.save(bankAccount)).thenReturn(bankAccount);
+        when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
+        when(bankAccountRepository.save(bankAccount)).thenReturn(bankAccount);
 
         BankAccount result = bankAccountService.updateBankAccountById(null, AccountStatus.SUSPENDED);
 
@@ -96,14 +108,15 @@ class BankAccountServiceTest {
     public void addCustomerToBankAccount() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
-        Mockito.when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
-        Mockito.when(customerService.getCustomerById(null)).thenReturn(bankAccount.getCustomers().getFirst());
-        Mockito.when(bankAccountRepository.save(bankAccount)).thenReturn(bankAccount);
+        when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
+        when(customerService.getCustomerById(null)).thenReturn(bankAccount.getCustomers().getFirst());
+        when(bankAccountRepository.save(bankAccount)).thenReturn(bankAccount);
 
-        bankAccountService.addCustomerToBankAccount(null, null);
+        BankAccount result = bankAccountService.addCustomerToBankAccount(null, null);
 
-        assertEquals(2, bankAccount.getCustomers().size());
         verify(bankAccountRepository).save(Mockito.any());
+        assertEquals(2, result.getCustomers().size());
+
     }
 
     @Test
@@ -112,9 +125,9 @@ class BankAccountServiceTest {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
         bankAccount.addCustomer(new Customer("test"));
 
-        Mockito.when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
-        Mockito.when(customerService.getCustomerById(null)).thenReturn(bankAccount.getCustomers().getFirst());
-        Mockito.when(bankAccountRepository.save(bankAccount)).thenReturn(bankAccount);
+        when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
+        when(customerService.getCustomerById(null)).thenReturn(bankAccount.getCustomers().getFirst());
+        when(bankAccountRepository.save(bankAccount)).thenReturn(bankAccount);
 
         BankAccount result = bankAccountService.removeCustomerFromBankAccount(null, null);
 
@@ -127,8 +140,8 @@ class BankAccountServiceTest {
     public void removeCustomerFromBankAccountThrowsException() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
-        Mockito.when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
-        Mockito.when(customerService.getCustomerById(null)).thenReturn(bankAccount.getCustomers().getFirst());
+        when(bankAccountRepository.findBankAccountById(null)).thenReturn(Optional.of(bankAccount));
+        when(customerService.getCustomerById(null)).thenReturn(bankAccount.getCustomers().getFirst());
 
         assertThrows(
                 TooLittleCustomersInBankAccountException.class,
@@ -143,21 +156,22 @@ class BankAccountServiceTest {
     public void deleteBankAccountById() {
         BankAccount bankAccount = (new BankAccountBuilder()).build();
 
-        Mockito.when(bankAccountRepository.removeBankAccountById(null)).thenReturn(Optional.of(bankAccount));
+        when(bankAccountRepository.removeBankAccountById(null)).thenReturn(Optional.of(bankAccount));
 
-        bankAccountService.deleteBankAccountById(null);
+        BankAccount result = bankAccountService.deleteBankAccountById(null);
 
         verify(bankAccountRepository).removeBankAccountById(null);
+        assertNotNull(result);
     }
 
     @Test
     @Description("Test if BankAccount is deleted by ID returns null")
     public void deleteBankAccountByIdReturnsNull() {
-        Mockito.when(bankAccountRepository.removeBankAccountById(null)).thenReturn(Optional.empty());
+        when(bankAccountRepository.removeBankAccountById(null)).thenReturn(Optional.empty());
 
         BankAccount result = bankAccountService.deleteBankAccountById(null);
 
-        assertNull(result);
         verify(bankAccountRepository).removeBankAccountById(null);
+        assertNull(result);
     }
 }

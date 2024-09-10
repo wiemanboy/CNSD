@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class CustomerServiceTest {
     private CustomerService customerService;
@@ -28,9 +29,10 @@ class CustomerServiceTest {
 
     @Test
     public void createCustomer() {
-        customerService.createCustomer("test");
+        Customer result = customerService.createCustomer("test");
 
         verify(customerRepository).save(Mockito.any());
+        assertNotNull(result);
     }
 
     @Test
@@ -38,17 +40,18 @@ class CustomerServiceTest {
     public void getCustomerById() {
         Customer customer = new Customer("test");
 
-        Mockito.when(customerRepository.findCustomerById(null)).thenReturn(Optional.of(customer));
+        when(customerRepository.findCustomerById(null)).thenReturn(Optional.of(customer));
 
-        customerService.getCustomerById(null);
+        Customer result = customerService.getCustomerById(null);
 
         verify(customerRepository).findCustomerById(null);
+        assertNotNull(result);
     }
 
     @Test
     @Description("Test if Customer is not retrieved by ID and throws exception")
     public void getCustomerByIdThrowsException() {
-        Mockito.when(customerRepository.findCustomerById(null)).thenReturn(Optional.empty());
+        when(customerRepository.findCustomerById(null)).thenReturn(Optional.empty());
 
         assertThrows(CustomerNotFoundException.class, () -> customerService.getCustomerById(null));
     }
@@ -56,13 +59,17 @@ class CustomerServiceTest {
     @Test
     @Description("Test if Customers are retrieved")
     public void getCustomers() {
-        Customer customer = new Customer("test");
+        List<Customer> customers = List.of(
+                new Customer("test"),
+                new Customer("test2")
+        );
 
-        Mockito.when(customerRepository.findAll()).thenReturn(List.of(customer));
+        when(customerRepository.findAll()).thenReturn(customers);
 
-        customerService.getCustomers();
+        List<Customer> result = customerService.getCustomers();
 
         verify(customerRepository).findAll();
+        assertEquals(2, result.size());
     }
 
     @Test
@@ -70,26 +77,30 @@ class CustomerServiceTest {
     public void updateCustomerById() {
         Customer customer = new Customer("test");
 
-        Mockito.when(customerRepository.findCustomerById(null)).thenReturn(Optional.of(customer));
+        when(customerRepository.findCustomerById(null)).thenReturn(Optional.of(customer));
 
         Customer result = customerService.updateCustomerById(null, "newName");
 
-        assertEquals("newName", result.getName());
         verify(customerRepository).save(Mockito.any());
+        assertEquals("newName", result.getName());
     }
 
     @Test
     @Description("Test if Customer is deleted by ID")
     public void deleteCustomerById() {
-        customerService.deleteCustomerById(null);
+        Customer customer = new Customer("test");
+        when(customerRepository.removeCustomerById(null)).thenReturn(Optional.of(customer));
+
+        Customer result = customerService.deleteCustomerById(null);
 
         verify(customerRepository).removeCustomerById(null);
+        assertNotNull(result);
     }
 
     @Test
     @Description("Test if Customer is not deleted by ID and returns null")
     public void deleteCustomerByIdReturnsNull() {
-        Mockito.when(customerRepository.removeCustomerById(null)).thenReturn(Optional.empty());
+        when(customerRepository.removeCustomerById(null)).thenReturn(Optional.empty());
 
         Customer result = customerService.deleteCustomerById(null);
 
