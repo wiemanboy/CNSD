@@ -12,24 +12,19 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * BankAccount has multiple customers associated with it, needs at least one customer to be created.
- * Also includes the value of the account and the status of the account.
- */
 @Entity
 @Getter
 public class BankAccount extends DBObject {
     @ManyToMany
     @JoinTable(
             name = "bank_account_customers",
-            joinColumns = @JoinColumn(name = "bank_account_id"),
-            inverseJoinColumns = @JoinColumn(name = "customer_id")
+            joinColumns = @JoinColumn(name = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "bank_account_id")
     )
-    private List<Customer> customers = new ArrayList<Customer>();
-
+    private final List<Customer> customers = new ArrayList<Customer>();
+    private final int balance = 0;
     @Setter
     private AccountStatus status = AccountStatus.OPEN;
-    private int value = 0;
 
     protected BankAccount() {
     }

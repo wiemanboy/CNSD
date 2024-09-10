@@ -17,7 +17,7 @@ public record BankAccountDTO(
                 bankAccount.getId(),
                 CustomerDTO.from(bankAccount.getCustomers()),
                 bankAccount.getStatus(),
-                bankAccount.getValue()
+                bankAccount.getBalance()
         );
     }
 

@@ -39,7 +39,7 @@ class BankAccountControllerTest {
         BankAccountDTO result = bankAccountController.createBankAccount(new BankAccountCreateDTO(null));
 
         assertInstanceOf(BankAccountDTO.class, result);
-        assertEquals(bankAccount.getValue(), result.value());
+        assertEquals(bankAccount.getBalance(), result.value());
     }
 
     @Test
