@@ -80,6 +80,17 @@ classDiagram
 
 ```
 
+## Testing
+
+Tests can be run with reports with `mvn test compile org.pitest:pitest-maven:mutationCoverage jacoco:report`, this will
+place the reports in the `target` directory.
+
+### Results
+
+![Jacoco Coverage](/assets/jacoco_report.png)
+
+![PIT Mutation Coverage](/assets/pitest_report.png)
+
 ## Leerdoelen
 
 - Met AWS werken
