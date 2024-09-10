@@ -23,7 +23,7 @@ public class CustomerService {
         Customer customer = new Customer(name);
 
         customerRepository.save(customer);
-        return new Customer(name);
+        return customer;
     }
 
     public Customer getCustomerById(UUID id) {

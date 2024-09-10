@@ -1,6 +1,7 @@
 package com.wiemanboy.cnsdbankapplication.presentation;
 
 import com.wiemanboy.cnsdbankapplication.application.CustomerService;
+import com.wiemanboy.cnsdbankapplication.domain.Customer;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.CustomerCreateDTO;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.request.CustomerUpdateDTO;
 import com.wiemanboy.cnsdbankapplication.presentation.dto.response.CustomerDTO;
@@ -43,6 +44,12 @@ public class CustomerController {
 
     @DeleteMapping("/{id}")
     public CustomerDTO deleteCustomerById(@PathVariable UUID id) {
-        return CustomerDTO.from(customerService.deleteCustomerById(id));
+        Customer customer = customerService.deleteCustomerById(id);
+
+        if (customer == null) {
+            return null;
+        }
+
+        return CustomerDTO.from(customer);
     }
 }
