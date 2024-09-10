@@ -1,5 +1,6 @@
 package com.wiemanboy.cnsdbankapplication.domain;
 
+import com.wiemanboy.cnsdbankapplication.domain.enums.AccountStatus;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -7,8 +8,13 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class BankAccountBuilder {
     private Customer customer = new Customer("test");
+    private AccountStatus status = AccountStatus.OPEN;
 
     public BankAccount build() {
-        return new BankAccount(customer);
+        BankAccount bankAccount = new BankAccount(customer);
+
+        bankAccount.setStatus(status);
+
+        return bankAccount;
     }
 }
