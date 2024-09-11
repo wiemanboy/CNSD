@@ -6,12 +6,13 @@ Feature: Remove a Customer from a BankAccount
     Then get error message
     And the BankAccount has 1 Customers
 
-  Scenario: Remove a Customer from a BankAccount with 2 Customers
-    Given a BankAccount with 2 Customers
+  Scenario Outline: Removing a Customer from a BankAccount with <start> Customers
+    Given a BankAccount with <start> Customers
     When a Customer is removed
-    Then the BankAccount has 1 Customers
+    Then the BankAccount has <end> Customers
 
-  Scenario: Remove a Customer from a BankAccount with 3 Customers
-    Given a BankAccount with 3 Customers
-    When a Customer is removed
-    Then the BankAccount has 2 Customers
+    Examples:
+      | start | end |
+      | 2     | 1   |
+      | 3     | 2   |
+      | 4     | 3   |
