@@ -31,11 +31,19 @@ public class BankAccountStepDefs {
                 CustomerDTO.class
         );
 
+        if (customerResponse.getBody() == null) {
+            throw new IllegalStateException("Customer id is null");
+        }
+
         bankAccountResponse = restTemplate.postForEntity(
                 bankAccountUrl,
                 new BankAccountCreateDTO(customerResponse.getBody().id()),
                 BankAccountDTO.class
         );
+
+        if (bankAccountResponse.getBody() == null) {
+            throw new IllegalStateException("BankAccount is null");
+        }
 
         for (int i = 1; i < numberOfCustomers; i++) {
             addCustomerToBankAccount(bankAccountResponse.getBody().id());
@@ -44,9 +52,13 @@ public class BankAccountStepDefs {
 
     @When("a Customer is removed")
     public void theCustomerIsRemoved() {
+        if (bankAccountResponse.getBody() == null) {
+            throw new IllegalStateException("BankAccount is null");
+        }
+
         response = restTemplate.postForEntity(
                 bankAccountUrl + "/{id}/remove-customer",
-                new BankAccountUpdateCustomerDTO(bankAccountResponse.getBody().customers().get(0).id()),
+                new BankAccountUpdateCustomerDTO(bankAccountResponse.getBody().customers().getFirst().id()),
                 String.class,
                 bankAccountResponse.getBody().id()
         );
@@ -59,7 +71,15 @@ public class BankAccountStepDefs {
 
     @Then("the BankAccount has {int} Customers")
     public void theBankAccountHasCustomers(int expectedCustomerCount) {
+        if (bankAccountResponse.getBody() == null) {
+            throw new IllegalStateException("BankAccount is null");
+        }
+
         ResponseEntity<BankAccountDTO> response = restTemplate.getForEntity(bankAccountUrl + "/{id}", BankAccountDTO.class, bankAccountResponse.getBody().id());
+
+        if (response.getBody() == null) {
+            throw new IllegalStateException("BankAccount is null");
+        }
 
         assertEquals(expectedCustomerCount, response.getBody().customers().size());
     }
@@ -70,6 +90,10 @@ public class BankAccountStepDefs {
                 new CustomerCreateDTO("test"),
                 CustomerDTO.class
         );
+
+        if (createdCustomerResponse.getBody() == null) {
+            throw new IllegalStateException("Customer id is null");
+        }
 
         restTemplate.postForEntity(
                 bankAccountUrl + "/{id}/add-customer",
