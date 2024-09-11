@@ -43,12 +43,12 @@ public class BankAccountController {
         return BankAccountDTO.from(bankAccountService.updateBankAccountById(id, bankAccountUpdateDTO.status()));
     }
 
-    @PatchMapping("/{id}/add-customer")
+    @PostMapping("/{id}/add-customer")
     public BankAccountDTO addCustomerToBankAccount(@PathVariable UUID id, @RequestBody BankAccountUpdateCustomerDTO bankAccountUpdateCustomerDTO) {
         return BankAccountDTO.from(bankAccountService.addCustomerToBankAccount(id, bankAccountUpdateCustomerDTO.customerId()));
     }
 
-    @PatchMapping("/{id}/remove-customer")
+    @PostMapping("/{id}/remove-customer")
     public BankAccountDTO removeCustomerFromBankAccount(@PathVariable UUID id, @RequestBody BankAccountUpdateCustomerDTO bankAccountUpdateCustomerDTO) {
         return BankAccountDTO.from(bankAccountService.removeCustomerFromBankAccount(id, bankAccountUpdateCustomerDTO.customerId()));
     }

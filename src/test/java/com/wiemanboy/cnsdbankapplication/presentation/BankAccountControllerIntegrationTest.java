@@ -95,7 +95,7 @@ public class BankAccountControllerIntegrationTest {
         BankAccount bankAccount = bankAccountRepository.save((new BankAccountBuilder()).setCustomer(customer).build());
         BankAccountUpdateCustomerDTO updateCustomerDTO = new BankAccountUpdateCustomerDTO(customer.getId());
 
-        mockMvc.perform(patch("/api/bank-accounts/{id}/add-customer", bankAccount.getId())
+        mockMvc.perform(post("/api/bank-accounts/{id}/add-customer", bankAccount.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateCustomerDTO)))
                 .andExpect(status().isOk())
@@ -111,7 +111,7 @@ public class BankAccountControllerIntegrationTest {
         BankAccount bankAccount = bankAccountRepository.save(unsavedBankAccount);
         BankAccountUpdateCustomerDTO updateCustomerDTO = new BankAccountUpdateCustomerDTO(customer.getId());
 
-        mockMvc.perform(patch("/api/bank-accounts/{id}/remove-customer", bankAccount.getId())
+        mockMvc.perform(post("/api/bank-accounts/{id}/remove-customer", bankAccount.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateCustomerDTO)))
                 .andExpect(status().isOk())
