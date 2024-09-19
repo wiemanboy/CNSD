@@ -30,3 +30,7 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ github.run_number }}
+          build-args: |
+            SONAR_QUBE_PROJECT_KEY=${{ secrets.SONAR_QUBE_PROJECT_KEY }}
+            SONAR_QUBE_URL=${{ secrets.SONAR_QUBE_URL }}
+            SONAR_QUBE_TOKEN=${{ secrets.SONAR_QUBE_TOKEN }}
