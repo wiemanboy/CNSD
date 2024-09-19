@@ -1,9 +1,11 @@
 FROM maven:3-eclipse-temurin-22-alpine AS build
 
+ARG SKIP_TESTS=false
+
 COPY . /usr/src/
 WORKDIR /usr/src/
 
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests=${SKIP_TESTS}
 
 FROM eclipse-temurin:22-jdk-alpine AS extract
 
