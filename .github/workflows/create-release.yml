@@ -1,0 +1,30 @@
+name: Create release
+
+on:
+  push:
+    branches:
+      - master
+      - release/*
+
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '22'
+
+      - name: Extract version from pom.xml
+        id: extract-version
+        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Create release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.TOKEN }}"
+          automatic_release_tag: ${{ vars.NEXT_VERSION }}
+          prerelease: false
+          title: "${{ github.event.repository.name }} v${{ env.VERSION }}"

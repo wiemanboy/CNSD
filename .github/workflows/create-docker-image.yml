@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - staging
       - release/*
 
 jobs:
@@ -39,16 +38,6 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ env.VERSION }}
-          build-args: |
-            SONAR_QUBE_PROJECT_KEY=${{ secrets.SONAR_QUBE_PROJECT_KEY }}
-            SONAR_QUBE_URL=${{ secrets.SONAR_QUBE_URL }}
-            SONAR_QUBE_TOKEN=${{ secrets.SONAR_QUBE_TOKEN }}
-
-      - name: Create release
-        uses: marvinpinto/action-automatic-releases@latest
-        with:
-          repo_token: "${{ secrets.TOKEN }}"
-          automatic_release_tag: ${{ env.VERSION }}
-          prerelease: false
-          title: "${{ github.event.repository.name }} ${{ env.VERSION }}"
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ env.VERSION }}
+            ${{ github.ref == 'refs/heads/master' && format('{0}/{1}:latest', secrets.DOCKER_HUB_USERNAME, vars.DOCKER_IMAGE_NAME) || '' }}
