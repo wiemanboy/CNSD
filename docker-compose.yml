@@ -2,9 +2,6 @@ services:
   bank-app:
     build:
       context: .
-      args:
-        SKIP_TESTS: "true"
-        SKIP_ANALYSIS: "true"
     ports:
       - "8080:8080"
     environment:
