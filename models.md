@@ -5,11 +5,13 @@ flowchart >
     customer(("customer")) --- browse("Browse tools")
     customer --- reserve("Reserve Tools")
     customer --- cancel("Cancel reservation")
-    customer --- pay("Pay")
+    customer --- payDeposit("Pay")
+    customer --- payTransaction("Pay transaction")
     customer --- chat("Chat")
     reserve --- employee(("employee"))
     chat --- employee
-    updateReservation("Update reservation") --- employee
+    acceptReservation("Accept reservation") --- employee
+    finishReservation("Finish reservation") --- employee
 ```
 
 ```mermaid
@@ -81,13 +83,7 @@ classDiagram
     }
 ```
 
-```mermaid
-sequenceDiagram
-    actor Customer
-    Customer ->>+ ReservationService: reserveTool
-    Customer ->>+ TransactionService: pay
-    TransactionService ->>- ReservationService: isPayed
-```
+# -
 
 ```mermaid
 flowchart
@@ -108,4 +104,12 @@ flowchart
     isPositive -->|no| payCustomer("Customer is payed back")
     customerPays --> final((end))
     payCustomer --> final
+```
+
+```mermaid
+sequenceDiagram
+    actor Customer
+    Customer ->>+ ReservationService: reserveTool
+    Customer ->>+ TransactionService: pay
+    TransactionService ->>- ReservationService: isPayed
 ```
