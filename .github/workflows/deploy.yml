@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Build & Deploy
+      - name: Deploy
         env:
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           HOSTNAME: ${{secrets.SSH_HOST}}
@@ -28,7 +28,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }};
             docker rm -f ${{ vars.DOCKER_IMAGE_NAME }} || true;
-            docker run -d -p 80:8080 --name cnsd-bank-app \
+            docker run -d -p 80:8080 --name ${{ vars.DOCKER_IMAGE_NAME }}\
             -e SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE}" \
             -e DB_URL="${DB_URL}" \
             -e DB_USERNAME="${DB_USERNAME}" \
