@@ -33,7 +33,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${{secrets.DEPLOYMENT_USER}}@${{secrets.DEPLOYMENT_HOST}} '
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }};
             docker rm -f ${{ vars.DOCKER_IMAGE_NAME }} || true;
-            docker run -d -p 80:8080 --name ${{ vars.DOCKER_IMAGE_NAME }}\
+            docker run -d -p 80:8080 --name ${{ vars.DOCKER_IMAGE_NAME }} \
             -e SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE}" \
             -e DB_URL="${DB_URL}" \
             -e DB_USERNAME="${DB_USERNAME}" \
