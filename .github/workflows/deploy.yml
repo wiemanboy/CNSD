@@ -16,7 +16,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: Set Version
+        id: set-version
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          if [ -z "$VERSION" ]; then
+            VERSION=${{ github.event.release.tag_name }}
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Deploy
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
@@ -28,5 +38,5 @@ jobs:
             -e DB_URL="${DB_URL}" \
             -e DB_USERNAME="${DB_USERNAME}" \
             -e DB_PASSWORD="${DB_PASSWORD}" \
-            ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ github.event.inputs.version }};
+            ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ env.VERSION }};
           '
