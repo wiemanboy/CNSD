@@ -1,12 +1,15 @@
 # Use case diagram
 
 ```mermaid
-flowchart
-    customer("customer") --> id["placeholder"]
-    employee("employee") --> id
-
-
-
+flowchart >
+    customer(("customer")) --- browse("Browse tools")
+    customer --- reserve("Reserve Tools")
+    customer --- cancel("Cancel reservation")
+    customer --- pay("Pay")
+    customer --- chat("Chat")
+    reserve --- employee(("employee"))
+    chat --- employee
+    updateReservation("Update reservation") --- employee
 ```
 
 ```mermaid
@@ -105,10 +108,4 @@ flowchart
     isPositive -->|no| payCustomer("Customer is payed back")
     customerPays --> final((end))
     payCustomer --> final
-```
-
-```mermaid
-architecture-beta
-
-
 ```
