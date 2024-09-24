@@ -54,6 +54,31 @@ jobs:
             ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ env.VERSION }}
             ${{ github.ref == 'refs/heads/master' && format('{0}/{1}:latest', secrets.DOCKER_HUB_USERNAME, vars.DOCKER_IMAGE_NAME) || '' }}
 
+  staging-deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy
+        run: |
+          echo "${{ secrets.STAGING_PRIVATE_KEY }}" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${{secrets.STAGING_USER}}@${{secrets.STAGING_HOST}} '
+          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }};
+          docker rm -f ${{ vars.DOCKER_IMAGE_NAME }} || true;
+          docker run -d -p 80:8080 --name ${{ vars.DOCKER_IMAGE_NAME }}\
+          -e SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE}" \
+          -e DB_URL="${DB_URL}" \
+          -e DB_USERNAME="${DB_USERNAME}" \
+          -e DB_PASSWORD="${DB_PASSWORD}" \
+          ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ env.VERSION }};
+          '
+          
+      - name: Test
+        run: echo "Run functional tests here"
+
+  release:
+    runs-on: ubuntu-latest
+    needs: staging-deploy
+    steps:
       - name: Create release
         uses: marvinpinto/action-automatic-releases@latest
         with:
