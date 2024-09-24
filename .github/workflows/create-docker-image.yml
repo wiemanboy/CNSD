@@ -41,3 +41,11 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ env.VERSION }}
             ${{ github.ref == 'refs/heads/master' && format('{0}/{1}:latest', secrets.DOCKER_HUB_USERNAME, vars.DOCKER_IMAGE_NAME) || '' }}
+
+      - name: Create release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.TOKEN }}"
+          automatic_release_tag: ${{ env.VERSION }}
+          prerelease: false
+          title: "${{ github.event.repository.name }} v${{ env.VERSION }}"
