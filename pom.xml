@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.wiemanboy</groupId>
     <artifactId>CNSDBankApplication</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1-TEST</version>
     <name>CNSD</name>
     <description>CNSD</description>
     <url/>
