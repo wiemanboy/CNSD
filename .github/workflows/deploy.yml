@@ -20,7 +20,7 @@ jobs:
       - name: Deploy
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${{secrets.SSH_NAME}}@${{secrets.SSH_HOST}}'
+          ssh -o StrictHostKeyChecking=no -i private_key ${{secrets.SSH_NAME}}@${{secrets.SSH_HOST}} '
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }};
             docker rm -f ${{ vars.DOCKER_IMAGE_NAME }} || true;
             docker run -d -p 80:8080 --name ${{ vars.DOCKER_IMAGE_NAME }}\
