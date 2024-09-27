@@ -2,6 +2,7 @@
   "taskDefinitionArn": "arn:aws:ecs:us-east-1:908236131786:task-definition/account-service-task-definition:5",
   "containerDefinitions": [
     {
+      "name": "account-service-container",
       "cpu": 256,
       "portMappings": [
         {

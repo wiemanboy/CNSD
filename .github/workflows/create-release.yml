@@ -69,7 +69,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: ${{ vars.DOCKER_IMAGE_NAME }}
+          container-name: account-service-container
           image: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ env.VERSION }}
           environment-variables: |
             SPRING_PROFILES_ACTIVE=prod
