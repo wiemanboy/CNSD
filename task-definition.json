@@ -1,5 +1,4 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:us-east-1:908236131786:task-definition/account-service-task-definition:5",
   "containerDefinitions": [
     {
       "name": "account-service-container",
@@ -39,40 +38,8 @@
   "taskRoleArn": "arn:aws:iam::908236131786:role/LabRole",
   "executionRoleArn": "arn:aws:iam::908236131786:role/LabRole",
   "networkMode": "awsvpc",
-  "revision": 5,
   "volumes": [],
-  "status": "ACTIVE",
-  "requiresAttributes": [
-    {
-      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-    },
-    {
-      "name": "ecs.capability.execution-role-awslogs"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.task-iam-role"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-    },
-    {
-      "name": "ecs.capability.task-eni"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
-    }
-  ],
   "placementConstraints": [],
-  "compatibilities": [
-    "EC2",
-    "FARGATE"
-  ],
   "requiresCompatibilities": [
     "FARGATE"
   ],
@@ -82,7 +49,5 @@
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2024-09-27T10:53:09.132Z",
-  "registeredBy": "arn:aws:sts::908236131786:assumed-role/voclabs/user3516707=Jarno_Wieman",
   "tags": []
 }

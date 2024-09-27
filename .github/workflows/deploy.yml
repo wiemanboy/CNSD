@@ -1,4 +1,4 @@
-name: Deploy via ssh
+name: Deploy to EC2
 
 on:
   release:
@@ -54,4 +54,4 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: account-service
           cluster: ecs-cluster-staging
-          wait-for-service-stability: true
+          wait-for-service-stability: false
