@@ -27,16 +27,30 @@ jobs:
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Deploy
-        run: |
-          echo "${{ secrets.DEPLOYMENT_PRIVATE_KEY }}" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${{secrets.DEPLOYMENT_USER}}@${{secrets.DEPLOYMENT_HOST}} '
-            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }};
-            docker rm -f ${{ vars.DOCKER_IMAGE_NAME }} || true;
-            docker run -d -p 80:8080 --name ${{ vars.DOCKER_IMAGE_NAME }} \
-            -e SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE}" \
-            -e DB_URL="${DB_URL}" \
-            -e DB_USERNAME="${DB_USERNAME}" \
-            -e DB_PASSWORD="${DB_PASSWORD}" \
-            ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ env.VERSION }};
-          '
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ vars.DOCKER_IMAGE_NAME }}
+          image: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:${{ env.VERSION }}
+          environment-variables: |
+            SPRING_PROFILES_ACTIVE=prod
+            DB_URL=${{ secrets.DEPLOYMENT_DB_URL }}
+            DB_USERNAME=${{ secrets.DEPLOYMENT_DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DEPLOYMENT_DB_PASSWORD }}
+
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: task-definition.json
+          service: account-service
+          cluster: ecs-cluster-staging
+          wait-for-service-stability: true
