@@ -22,8 +22,8 @@ public class FileService {
     }
 
     public void fileDownload(InputStream file) {
-        String fileKey = format("uploads/%s", UUID.randomUUID());
-        amazonS3.putObject("jarno-messaging-bucket", fileKey, file, null);
+        String fileKey = UUID.randomUUID().toString();
+        amazonS3.putObject("jarno-messaging-bucket", format("uploads/%s", fileKey), file, null);
         messageProducer.fileDownload(fileKey);
     }
 }

@@ -1,29 +1,37 @@
 package com.wiemanboy.consumer;
 
-import com.amazonaws.services.sqs.AmazonSQSAsync;
-import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
-import org.springframework.cloud.aws.messaging.config.SimpleMessageListenerContainerFactory;
-import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
+import io.awspring.cloud.sqs.operations.SqsTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
 @Configuration
-@EnableSqs
 public class AwsSqsConfig {
+    @Value("${spring.cloud.aws.credentials.access-key}")
+    private String accessKey;
+    @Value("${spring.cloud.aws.credentials.secret-key}")
+    private String secretKey;
+    @Value("${spring.cloud.aws.region.static}")
+    private String region;
+    @Value("${spring.cloud.aws.credentials.session-token}")
+    private String sessionToken;
 
     @Bean
-    @Primary
-    public AmazonSQSAsync amazonSQSAsync() {
-        return AmazonSQSAsyncClientBuilder.defaultClient();
+    SqsAsyncClient sqsAsyncClient(){
+        return SqsAsyncClient
+                .builder()
+                .region(Region.of(region))
+                .credentialsProvider(StaticCredentialsProvider
+                        .create(AwsSessionCredentials.create(accessKey, secretKey, sessionToken)))
+                .build();
     }
 
     @Bean
-    public SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory(AmazonSQSAsync amazonSQSAsync) {
-        SimpleMessageListenerContainerFactory factory = new SimpleMessageListenerContainerFactory();
-        factory.setAmazonSqs(amazonSQSAsync);
-        factory.setAutoStartup(false);
-        factory.setMaxNumberOfMessages(5);
-        return factory;
+    public SqsTemplate sqsTemplate(SqsAsyncClient sqsAsyncClient){
+        return SqsTemplate.builder().sqsAsyncClient(sqsAsyncClient).build();
     }
 }

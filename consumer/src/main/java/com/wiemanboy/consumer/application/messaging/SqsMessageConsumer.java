@@ -2,7 +2,8 @@ package com.wiemanboy.consumer.application.messaging;
 
 import com.wiemanboy.consumer.application.FileService;
 import com.wiemanboy.consumer.application.messaging.dto.DownloadDto;
-import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
+import io.awspring.cloud.sqs.annotation.SqsListener;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +16,7 @@ public class SqsMessageConsumer {
     }
 
     @SqsListener("DownloadQueue")
-    public void consumeDownloadMessage(DownloadDto downloadDto) {
-        fileService.processImage(downloadDto.fileKey());
+    public void consumeDownloadMessage(Message<DownloadDto> message) {
+        fileService.processImage(message.getPayload().fileKey());
     }
 }
