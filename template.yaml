@@ -34,6 +34,29 @@ Resources:
         Variables:
           PARAM1: VALUE
 
+  ProcessImageFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Role: arn:aws:iam::632184430572:role/LabRole
+      CodeUri: process-image/
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Architectures:
+        - x86_64
+      Events:
+        DownloadImageSqsEvent:
+          Type: SQS
+          Properties:
+            Queue: arn:aws:sqs:us-east-1:632184430572:DownloadQueue
+            BatchSize: 1
+      Environment:
+        Variables:
+          REGION: "us-east-1"
+          BUCKET: "jarno-messaging-bucket"
+
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
@@ -44,3 +67,6 @@ Outputs:
   HelloWorldFunction:
     Description: "First Lambda Function ARN"
     Value: !GetAtt HelloWorldFunction.Arn
+  ProcessImageFunction:
+    Description: "Lambda image processing Function ARN"
+    Value: !GetAtt ProcessImageFunction.Arn
