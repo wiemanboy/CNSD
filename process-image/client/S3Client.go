@@ -7,6 +7,11 @@ import (
 	"log"
 )
 
+type S3Client interface {
+	GetObject(input *s3.GetObjectInput) (*s3.GetObjectOutput, error)
+	PutObject(input *s3.PutObjectInput) (*s3.PutObjectOutput, error)
+}
+
 func NewS3Client(region *string) *s3.S3 {
 	s3Session, err := session.NewSession(&aws.Config{
 		Region:           region,

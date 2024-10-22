@@ -18,17 +18,12 @@ type SqsMessage struct {
 	FileKey string `json:"fileKey"`
 }
 
-type S3Client interface {
-	GetObject(input *s3.GetObjectInput) (*s3.GetObjectOutput, error)
-	PutObject(input *s3.PutObjectInput) (*s3.PutObjectOutput, error)
-}
-
 type LambdaHandler struct {
-	s3Client S3Client
+	s3Client client.S3Client
 	bucket   string
 }
 
-func NewLambdaHandler(s3Client S3Client, bucket string) *LambdaHandler {
+func NewLambdaHandler(s3Client client.S3Client, bucket string) *LambdaHandler {
 	return &LambdaHandler{
 		s3Client: s3Client,
 		bucket:   bucket,
