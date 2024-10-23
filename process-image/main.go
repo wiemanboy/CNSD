@@ -60,7 +60,6 @@ func (handler *LambdaHandler) ProcessSqsEvent(ctx context.Context, sqsEvent even
 			return fmt.Errorf("failed to read object content: %v", err)
 		}
 		println(fmt.Sprintf("processing: %s", fileKey))
-		println(ctx)
 
 		// Put the object in the processed bucket
 		_, err = handler.s3Client.PutObjectWithContext(ctx, &s3.PutObjectInput{
