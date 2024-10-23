@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-xray-sdk-go/xray"
 	"io"
 	"os"
 	"process-image/client"
@@ -43,7 +44,7 @@ func (handler *LambdaHandler) ProcessSqsEvent(ctx context.Context, sqsEvent even
 		fileKey := sqsMessage.FileKey
 
 		// Get the object from S3
-		object, err := handler.s3Client.GetObject(&s3.GetObjectInput{
+		object, err := handler.s3Client.GetObjectWithContext(ctx, &s3.GetObjectInput{
 			Bucket: aws.String(handler.bucket),
 			Key:    aws.String(fmt.Sprintf("uploads/%s", fileKey)),
 		})
@@ -58,10 +59,11 @@ func (handler *LambdaHandler) ProcessSqsEvent(ctx context.Context, sqsEvent even
 		if err != nil {
 			return fmt.Errorf("failed to read object content: %v", err)
 		}
-		println(fmt.Sprintf("processing: %s", objectContent))
+		println(fmt.Sprintf("processing: %s", fileKey))
+		println(ctx)
 
 		// Put the object in the processed bucket
-		_, err = handler.s3Client.PutObject(&s3.PutObjectInput{
+		_, err = handler.s3Client.PutObjectWithContext(ctx, &s3.PutObjectInput{
 			Bucket: aws.String(handler.bucket),
 			Key:    aws.String(fmt.Sprintf("processed/%s", fileKey)),
 			Body:   aws.ReadSeekCloser(bytes.NewReader(objectContent)),
@@ -79,6 +81,8 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 	bucket := os.Getenv("BUCKET")
 
 	s3Client := client.NewS3Client(&region)
+	xray.AWS(s3Client.Client)
+
 	lambdaHandler := NewLambdaHandler(s3Client, bucket)
 
 	return lambdaHandler.ProcessSqsEvent(ctx, sqsEvent)

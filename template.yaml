@@ -18,6 +18,7 @@ Resources:
     Metadata:
       BuildMethod: go1.x
     Properties:
+      Tracing: Active
       Role: arn:aws:iam::632184430572:role/LabRole
       CodeUri: hello-world/
       Handler: bootstrap
@@ -39,6 +40,7 @@ Resources:
     Metadata:
       BuildMethod: go1.x
     Properties:
+      Tracing: Active
       Role: arn:aws:iam::632184430572:role/LabRole
       CodeUri: process-image/
       Handler: bootstrap
