@@ -25,10 +25,10 @@ jobs:
         uses: aws-actions/setup-sam@v2
 
       - name: Test
-        run: go test ./...
+        run: test
 
       - name: Build
         run: make
 
       - name: Deploy
-        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+        run: deploy
