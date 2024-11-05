@@ -1,0 +1,70 @@
+openapi: "3.0.1"
+info:
+  title: "CNSD Notes API"
+  description: "A simple API to get and post notes"
+  version: "1.0.0"
+
+components:
+  schemas:
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        userId:
+          type: string
+          example: "1"
+        content:
+          type: string
+          example: "This is a sample note content."
+
+paths:
+  /notes:
+    get:
+      summary: "Retrieve all notes"
+      operationId: "getNotes"
+      responses:
+        '200':
+          description: "A successful response"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Note"
+
+    post:
+      summary: "Create a new note"
+      operationId: "createNote"
+      requestBody:
+        description: "Note object to be created"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  example: "1"
+                content:
+                  type: string
+                  example: "Content of the new note"
+      responses:
+        '201':
+          description: "Note successfully created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+        '400':
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request format"
