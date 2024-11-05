@@ -11,7 +11,7 @@ import (
 
 type Note struct {
 	NoteId  string `json:"noteId"`
-	UserId  string `json:"userId"`
+	OwnerId string `json:"ownerId"`
 	Content string `json:"content"`
 }
 
@@ -25,7 +25,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	if err != nil {
 		return events.APIGatewayProxyResponse{
-			Body:       err.Error(),
+			Body:       "Failed to fetch notes",
 			StatusCode: 500,
 		}, err
 	}
@@ -34,7 +34,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	for _, item := range result.Items {
 		note := Note{
 			NoteId:  *item["note-id"].S,
-			UserId:  *item["user-id"].S,
+			OwnerId: *item["owner-id"].S,
 			Content: *item["content"].S,
 		}
 		notes = append(notes, note)

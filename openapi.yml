@@ -9,10 +9,10 @@ components:
     Note:
       type: object
       properties:
-        id:
+        noteId:
           type: string
           example: "1"
-        userId:
+        ownerId:
           type: string
           example: "1"
         content:
@@ -50,7 +50,7 @@ paths:
             schema:
               type: object
               properties:
-                userId:
+                ownerId:
                   type: string
                   example: "1"
                 content:

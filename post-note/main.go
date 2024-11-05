@@ -11,13 +11,13 @@ import (
 )
 
 type Request struct {
-	UserId  string `json:"userId"`
+	OwnerId string `json:"ownerId"`
 	Content string `json:"content"`
 }
 
 type Note struct {
 	NoteId  string `json:"noteId"`
-	UserId  string `json:"userId"`
+	OwnerId string `json:"ownerId"`
 	Content string `json:"content"`
 }
 
@@ -36,7 +36,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	note := Note{
 		NoteId:  uuid.New().String(),
-		UserId:  requestData.UserId,
+		OwnerId: requestData.OwnerId,
 		Content: requestData.Content,
 	}
 
@@ -46,8 +46,8 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 			"note-id": {
 				S: aws.String(note.NoteId),
 			},
-			"user-id": {
-				S: aws.String(note.UserId),
+			"owner-id": {
+				S: aws.String(note.OwnerId),
 			},
 			"content": {
 				S: aws.String(note.Content),
@@ -57,7 +57,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	if err != nil {
 		return events.APIGatewayProxyResponse{
-			Body:       err.Error(),
+			Body:       "Failed to save note",
 			StatusCode: 500,
 		}, err
 	}
