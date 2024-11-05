@@ -1,4 +1,4 @@
-openapi: "3.0.1"
+openapi: "3.0.3"
 info:
   title: "CNSD Notes API"
   description: "A simple API to get and post notes"
@@ -33,6 +33,11 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Note"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetNotesFunction.Arn}/invocations
+        httpMethod: POST
+        type: aws_proxy
 
     post:
       summary: "Create a new note"
@@ -51,6 +56,12 @@ paths:
                 content:
                   type: string
                   example: "Content of the new note"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostNoteFunction.Arn}/invocations
+        httpMethod: POST
+        type: aws_proxy
+
       responses:
         '201':
           description: "Note successfully created"
@@ -58,13 +69,3 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Note"
-        '400':
-          description: "Invalid input"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Invalid request format"

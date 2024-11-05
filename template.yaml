@@ -1,9 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CNSD - Sample SAM Template for CNSD
+
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 128
+    ReservedConcurrentExecutions: 1
+
 Resources:
   NotesApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: Prod
-      DefinitionUri: openapi.yml
+      Name: "CNSD Notes API"
+      StageName: prod
+      OpenApiVersion: '3.0.3'
+      DefinitionBody:
+        'Fn::Transform':
+          Name: 'AWS::Include'
+          Parameters:
+            Location: openapi.yml
 
   GetNotesFunction:
     Type: AWS::Serverless::Function
