@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 128
+    ReservedConcurrentExecutions: 1
+
+# https://github.com/wiemanboy/CNSD/blob/module/2/opdracht/4/4/multi-step-demo/template.yaml
+Resources:
+  ReservationStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Role: arn:aws:iam::632184430572:role/LabRole
+      DefinitionUri: statemachine/reservation.asl.json
