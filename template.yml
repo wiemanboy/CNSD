@@ -19,18 +19,6 @@ Resources:
         ConfirmFunctionArn: !GetAtt ConfirmFunction.Arn
         CancelFunctionArn: !GetAtt CancelFunction.Arn
 
-  ReservationApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      Name: "CNSD Reservation API"
-      StageName: prod
-      OpenApiVersion: '3.0.3'
-      DefinitionBody:
-        'Fn::Transform':
-          Name: 'AWS::Include'
-          Parameters:
-            Location: openapi.yml
-
   ReserveFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -42,13 +30,6 @@ Resources:
       Runtime: provided.al2023
       Architectures:
         - x86_64
-      Events:
-        ReserveEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ReservationApi
-            Path: /reservations
-            Method: POST
       Environment:
         Variables:
           TABLE_NAME: !Ref ReservationTable

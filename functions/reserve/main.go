@@ -1,8 +1,8 @@
 package main
 
 import (
-	"encoding/json"
-	"github.com/aws/aws-lambda-go/events"
+	"context"
+	"fmt"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -14,23 +14,11 @@ import (
 	"reservation/shared/types"
 )
 
-type Request struct {
-	Location string `json:"location"`
-	Date     string `json:"date"`
-}
+func handler(ctx context.Context, event types.ReservationInput) (types.ReservationEvent, error) {
+	fmt.Printf("Processing event: %s", event)
 
-func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	dynamoDb := client.NewDynamoDBClient("us-east-1")
 	table := os.Getenv("TABLE_NAME")
-
-	var requestData Request
-	err := json.Unmarshal([]byte(request.Body), &requestData)
-	if err != nil {
-		return events.APIGatewayProxyResponse{
-			Body:       "Failed to parse request body",
-			StatusCode: 400,
-		}, err
-	}
 
 	var status ReservationStatus.ReservationStatus
 	randomNumber := rand.Intn(5)
@@ -42,12 +30,12 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	reservation := types.Reservation{
 		Id:       uuid.New().String(),
-		Location: requestData.Location,
-		Date:     requestData.Date,
+		Location: event.Location,
+		Date:     event.Date,
 		Status:   string(status),
 	}
 
-	_, err = dynamoDb.PutItem(&dynamodb.PutItemInput{
+	_, err := dynamoDb.PutItem(&dynamodb.PutItemInput{
 		TableName: &table,
 		Item: map[string]*dynamodb.AttributeValue{
 			"pk": {
@@ -66,17 +54,17 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	})
 
 	if err != nil {
-		return events.APIGatewayProxyResponse{
-			Body:       "Failed to save reservation",
-			StatusCode: 500,
+		return types.ReservationEvent{
+			Message: "Failed to reserve",
+			Id:      reservation.Id,
+			Status:  reservation.Status,
 		}, err
 	}
 
-	response, _ := json.Marshal(reservation)
-
-	return events.APIGatewayProxyResponse{
-		Body:       string(response),
-		StatusCode: 201,
+	return types.ReservationEvent{
+		Message: "Reservation saved",
+		Id:      reservation.Id,
+		Status:  reservation.Status,
 	}, nil
 }
 
