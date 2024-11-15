@@ -1,1 +1,7 @@
-package cancel
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Print("Cancel")
+}

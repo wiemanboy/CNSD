@@ -1,4 +1,4 @@
-package reserve
+package main
 
 import (
 	"encoding/json"
