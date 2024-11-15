@@ -14,7 +14,10 @@ Resources:
     Properties:
       Role: arn:aws:iam::632184430572:role/LabRole
       DefinitionUri: statemachine/reservation.asl.json
-
+      DefinitionSubstitutions:
+        ReserveFunctionArn: !GetAtt ReserveFunction.Arn
+        ConfirmFunctionArn: !GetAtt ConfirmFunction.Arn
+        CancelFunctionArn: !GetAtt CancelFunction.Arn
 
   ReservationApi:
     Type: AWS::Serverless::Api
@@ -44,7 +47,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref ReservationApi
-            Path: /notes
+            Path: /reservations
             Method: POST
       Environment:
         Variables:
@@ -97,3 +100,12 @@ Outputs:
   StockTradingStateMachineArn:
     Description: "Stock Trading State machine ARN"
     Value: !Ref ReservationStateMachine
+  ReserveFunctionArn:
+    Description: "Reserve Function ARN"
+    Value: !GetAtt ReserveFunction.Arn
+  ConfirmFunctionArn:
+    Description: "Confirm Function ARN"
+    Value: !GetAtt ConfirmFunction.Arn
+  CancelFunctionArn:
+    Description: "Cancel Function ARN"
+    Value: !GetAtt CancelFunction.Arn

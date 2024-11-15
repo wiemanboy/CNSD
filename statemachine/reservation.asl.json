@@ -4,26 +4,15 @@
   "States": {
     "Reserve": {
       "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
-      "OutputPath": "$.Payload",
-      "Parameters": {
-        "Payload": {
-          "location": "america",
-          "date": "14-11-2024"
-        }
-      },
+      "Resource": "${ReserveFunctionArn}",
       "Retry": [
         {
           "ErrorEquals": [
-            "Lambda.ServiceException",
-            "Lambda.AWSLambdaException",
-            "Lambda.SdkClientException",
-            "Lambda.TooManyRequestsException"
+            "States.TaskFailed"
           ],
-          "IntervalSeconds": 1,
-          "MaxAttempts": 3,
-          "BackoffRate": 2,
-          "JitterStrategy": "FULL"
+          "IntervalSeconds": 15,
+          "MaxAttempts": 5,
+          "BackoffRate": 1.5
         }
       ],
       "Next": "Reserved"
@@ -32,8 +21,8 @@
       "Type": "Choice",
       "Choices": [
         {
-          "Variable": "$.payload.status",
-          "StringEquals": "success",
+          "Variable": "$.payload.id",
+          "NumericLessThanEquals": 50,
           "Next": "Confirm"
         }
       ],
@@ -41,46 +30,30 @@
     },
     "Confirm": {
       "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
-      "OutputPath": "$.Payload",
-      "Parameters": {
-        "Payload.$": "$"
-      },
+      "Resource": "${ConfirmFunctionArn}",
       "Retry": [
         {
           "ErrorEquals": [
-            "Lambda.ServiceException",
-            "Lambda.AWSLambdaException",
-            "Lambda.SdkClientException",
-            "Lambda.TooManyRequestsException"
+            "States.TaskFailed"
           ],
-          "IntervalSeconds": 1,
+          "IntervalSeconds": 2,
           "MaxAttempts": 3,
-          "BackoffRate": 2,
-          "JitterStrategy": "FULL"
+          "BackoffRate": 1
         }
       ],
       "End": true
     },
     "Cancel": {
       "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
-      "OutputPath": "$.Payload",
-      "Parameters": {
-        "Payload.$": "$"
-      },
+      "Resource": "${CancelFunctionArn}",
       "Retry": [
         {
           "ErrorEquals": [
-            "Lambda.ServiceException",
-            "Lambda.AWSLambdaException",
-            "Lambda.SdkClientException",
-            "Lambda.TooManyRequestsException"
+            "States.TaskFailed"
           ],
-          "IntervalSeconds": 1,
+          "IntervalSeconds": 2,
           "MaxAttempts": 3,
-          "BackoffRate": 2,
-          "JitterStrategy": "FULL"
+          "BackoffRate": 1
         }
       ],
       "End": true
