@@ -14,3 +14,86 @@ Resources:
     Properties:
       Role: arn:aws:iam::632184430572:role/LabRole
       DefinitionUri: statemachine/reservation.asl.json
+
+
+  ReservationApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: "CNSD Reservation API"
+      StageName: prod
+      OpenApiVersion: '3.0.3'
+      DefinitionBody:
+        'Fn::Transform':
+          Name: 'AWS::Include'
+          Parameters:
+            Location: openapi.yml
+
+  ReserveFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Role: arn:aws:iam::632184430572:role/LabRole
+      CodeUri: functions/reserve/
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Architectures:
+        - x86_64
+      Events:
+        ReserveEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ReservationApi
+            Path: /notes
+            Method: POST
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ReservationTable
+
+  ConfirmFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Role: arn:aws:iam::632184430572:role/LabRole
+      CodeUri: functions/confirm/
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ReservationTable
+
+  CancelFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Role: arn:aws:iam::632184430572:role/LabRole
+      CodeUri: functions/cancel/
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ReservationTable
+
+  ReservationTable:
+    Type: AWS::Serverless::SimpleTable # More info about SimpleTable Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-simpletable.html
+    Properties:
+      PrimaryKey:
+        Name: pk
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+Outputs:
+  # StockTradingStateMachineHourlyTradingSchedule is an implicit Schedule event rule created out of Events key under Serverless::StateMachine
+  # Find out more about other implicit resources you can reference within SAM
+  # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-generated-resources.html
+  StockTradingStateMachineArn:
+    Description: "Stock Trading State machine ARN"
+    Value: !Ref ReservationStateMachine

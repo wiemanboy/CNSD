@@ -1,0 +1,53 @@
+openapi: "3.0.3"
+info:
+  title: "CNSD Reservation API"
+  description: "A simple API to post reservations"
+  version: "1.0.0"
+
+components:
+  schemas:
+    Reservation:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        location:
+          type: string
+          example: "america"
+        date:
+          type: string
+          example: "15-11-2024"
+
+paths:
+  /reservations:
+    post:
+      summary: "Create a reservation"
+      operationId: "createReservation"
+      requestBody:
+        description: "Reservation object to be created"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                location:
+                  type: string
+                  example: "america"
+                date:
+                  type: string
+                  example: "15-11-2024"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReserveFunction.Arn}/invocations
+        httpMethod: POST
+        type: aws_proxy
+
+      responses:
+        '201':
+          description: "Reservation successfully created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservation"
