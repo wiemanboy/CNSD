@@ -7,17 +7,14 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/google/uuid"
+	"math/rand"
 	"os"
 	"reservation/shared/client"
+	"reservation/shared/enums/ReservationStatus"
+	"reservation/shared/types"
 )
 
 type Request struct {
-	Location string `json:"location"`
-	Date     string `json:"date"`
-}
-
-type Reservation struct {
-	Id       string `json:"id"`
 	Location string `json:"location"`
 	Date     string `json:"date"`
 }
@@ -35,10 +32,19 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, err
 	}
 
-	reservation := Reservation{
+	var status ReservationStatus.ReservationStatus
+	randomNumber := rand.Intn(5)
+	if randomNumber == 0 {
+		status = ReservationStatus.Failed
+	} else {
+		status = ReservationStatus.Success
+	}
+
+	reservation := types.Reservation{
 		Id:       uuid.New().String(),
 		Location: requestData.Location,
 		Date:     requestData.Date,
+		Status:   string(status),
 	}
 
 	_, err = dynamoDb.PutItem(&dynamodb.PutItemInput{
@@ -52,6 +58,9 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 			},
 			"date": {
 				S: aws.String(reservation.Date),
+			},
+			"status": {
+				S: aws.String(reservation.Status),
 			},
 		},
 	})
