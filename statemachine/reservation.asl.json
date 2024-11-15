@@ -5,6 +5,7 @@
     "Reserve": {
       "Type": "Task",
       "Resource": "${ReserveFunctionArn}",
+      "ResultPath": "$.payload",
       "Retry": [
         {
           "ErrorEquals": [
@@ -21,9 +22,14 @@
       "Type": "Choice",
       "Choices": [
         {
-          "Variable": "$.payload.id",
-          "NumericLessThanEquals": 50,
+          "Variable": "$.payload.status",
+          "StringEquals": "SUCCESS",
           "Next": "Confirm"
+        },
+        {
+          "Variable": "$.payload.status",
+          "StringEquals": "FAILED",
+          "Next": "Cancel"
         }
       ],
       "Default": "Cancel"
@@ -31,6 +37,7 @@
     "Confirm": {
       "Type": "Task",
       "Resource": "${ConfirmFunctionArn}",
+      "ResultPath": "$.result",
       "Retry": [
         {
           "ErrorEquals": [
@@ -41,11 +48,12 @@
           "BackoffRate": 1
         }
       ],
-      "End": true
+      "Next": "EndState"
     },
     "Cancel": {
       "Type": "Task",
       "Resource": "${CancelFunctionArn}",
+      "ResultPath": "$.result",
       "Retry": [
         {
           "ErrorEquals": [
@@ -56,7 +64,11 @@
           "BackoffRate": 1
         }
       ],
-      "End": true
+      "Next": "EndState"
+    },
+    "EndState": {
+      "Type": "Succeed",
+      "Comment": "State machine execution finished."
     }
   }
 }
