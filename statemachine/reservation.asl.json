@@ -5,7 +5,7 @@
     "Reserve": {
       "Type": "Task",
       "Resource": "${ReserveFunctionArn}",
-      "ResultPath": "$.payload",
+      "ResultPath": "$",
       "Retry": [
         {
           "ErrorEquals": [
@@ -37,7 +37,7 @@
     "Confirm": {
       "Type": "Task",
       "Resource": "${ConfirmFunctionArn}",
-      "ResultPath": "$.result",
+      "ResultPath": "$",
       "Retry": [
         {
           "ErrorEquals": [
@@ -53,7 +53,7 @@
     "Cancel": {
       "Type": "Task",
       "Resource": "${CancelFunctionArn}",
-      "ResultPath": "$.result",
+      "ResultPath": "$",
       "Retry": [
         {
           "ErrorEquals": [

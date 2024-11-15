@@ -14,8 +14,10 @@ import (
 	"reservation/shared/types"
 )
 
-func handler(ctx context.Context, event types.ReservationInput) (types.ReservationEvent, error) {
+func handler(ctx context.Context, event types.Event[types.ReservationInput]) (types.Event[types.ReservationEvent], error) {
 	fmt.Printf("Processing event: %s", event)
+
+	input := event.Payload
 
 	dynamoDb := client.NewDynamoDBClient("us-east-1")
 	table := os.Getenv("TABLE_NAME")
@@ -30,8 +32,8 @@ func handler(ctx context.Context, event types.ReservationInput) (types.Reservati
 
 	reservation := types.Reservation{
 		Id:       uuid.New().String(),
-		Location: event.Location,
-		Date:     event.Date,
+		Location: input.Location,
+		Date:     input.Date,
 		Status:   string(status),
 	}
 
@@ -54,17 +56,21 @@ func handler(ctx context.Context, event types.ReservationInput) (types.Reservati
 	})
 
 	if err != nil {
-		return types.ReservationEvent{
-			Message: "Failed to reserve",
-			Id:      reservation.Id,
-			Status:  reservation.Status,
+		return types.Event[types.ReservationEvent]{
+			Payload: types.ReservationEvent{
+				Message: "Failed to reserve",
+				Id:      reservation.Id,
+				Status:  reservation.Status,
+			},
 		}, err
 	}
 
-	return types.ReservationEvent{
-		Message: "Reservation saved",
-		Id:      reservation.Id,
-		Status:  reservation.Status,
+	return types.Event[types.ReservationEvent]{
+		Payload: types.ReservationEvent{
+			Message: "Reservation saved",
+			Id:      reservation.Id,
+			Status:  reservation.Status,
+		},
 	}, nil
 }
 
