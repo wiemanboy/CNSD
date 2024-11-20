@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  test-app
+
+  Sample SAM Template for test-app
+
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 128
+    ReservedConcurrentExecutions: 1
+
+Resources:
+  TestApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: arn:aws:iam::632184430572:role/LabRole
+      CodeUri: functions/test_api/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Architectures:
+        - x86_64
+      Events:
+        Test:
+          Type: Api
+          Properties:
+            Path: /test
+            Method: get
+
+Outputs:
+  TestdApi:
+    Description: "API Gateway endpoint URL for Prod stage for Testfunction"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  TestApiFunction:
+    Description: "Test Lambda Function ARN"
+    Value: "TestApiFunction"
