@@ -1,42 +1,36 @@
 import json
+import os
 
-# import requests
+from typing import TypedDict, Dict, Any
+
+from dynamo_db_client import get_client, save_user
 
 
-def lambda_handler(event, context):
-    """Sample pure Lambda function
+class LambdaApiEvent(TypedDict):
+    resource: str
+    path: str
+    httpMethod: str
+    headers: Dict[str, str]
+    queryStringParameters: Dict[str, str]
+    pathParameters: Dict[str, str]
+    body: str
+    isBase64Encoded: bool
 
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
 
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
+def lambda_handler(event: LambdaApiEvent, context: Any):
+    dynamodb_client = get_client()
+    table_name = os.getenv("TABLE_NAME")
 
-    context: object, required
-        Lambda Context runtime methods and attributes
+    body = json.loads(event["body"])
+    username = body["username"]
+    color = body["color"]
 
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
-
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
-
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
-    """
-
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
-
-    #     raise e
+    save_user(dynamodb_client, table_name, username, color)
 
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "hello world",
-            # "location": ip.text.replace("\n", "")
+            "username": f"{username}",
+            "favorite_color": f"{color}",
         }),
     }
