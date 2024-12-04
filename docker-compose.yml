@@ -1,0 +1,27 @@
+version: '3'
+services:
+  cddb-mysql:
+    image: mysql:5.6
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: quintor_pw
+      MYSQL_DATABASE: cddb_quintor
+      MYSQL_USER: cddb_quintor
+      MYSQL_PASSWORD: quintor_pw
+  cddb-backend:
+    depends_on:
+      - cddb-mysql
+    image: awassink/cddb-backend:perf-no-issue-1
+    environment:
+      APP_ENVIRONMENT: mysql
+    ports:
+      - "28080:8080"
+    restart: always
+  cddb-frontend:
+      depends_on:
+        - cddb-backend
+      image: awassink/cddb-frontend:cloud-v2.2
+      ports:
+        - "20080:80"
+      restart: always
+    

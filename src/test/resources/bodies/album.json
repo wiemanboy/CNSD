@@ -1,0 +1,6 @@
+{
+    "id": ${albumid}, 
+    "artist": "PT_TestArtist",
+    "name": "${albumName}",
+    "year":  2020
+}
