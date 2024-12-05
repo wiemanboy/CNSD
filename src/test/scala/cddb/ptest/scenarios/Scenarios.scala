@@ -69,9 +69,14 @@ object Scenarios {
       * the src/test/resources/data/albumids.csv file
       * 
       * @TODO: Complete implementation
-      */  
-    val getTracksOfCsvAlbumsScenario = scenario("Get all tracks of give albums")
+      */
+    val albumIdFeeder = csv("src/test/resources/data/albumids.csv").circular
 
+    val getTracksOfCsvAlbumsScenario = scenario("Get all tracks of given albums")
+      .feed(albumIdFeeder)
+      .exec(TrackRequest.getAll
+        .check(status.is(200))
+      )
     /**
       * Scenario: user get all the album and get all the tracks for one of the albums, chosen randomly
       * 
