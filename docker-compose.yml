@@ -10,7 +10,7 @@ services:
   cddb-backend:
     depends_on:
       - cddb-mysql
-    image: awassink/cddb-backend:perf-no-issue-1
+    image: awassink/cddb-backend:perf-issue-3
     environment:
       APP_ENVIRONMENT: mysql
     ports:
