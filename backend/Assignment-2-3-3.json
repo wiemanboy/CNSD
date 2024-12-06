@@ -1,0 +1,773 @@
+{
+  "ModelName": "Assignment-2-4-3",
+  "ModelMetadata": {
+    "Author": "Arjen Wassink",
+    "DateCreated": "Nov 10, 2022, 12:18 PM",
+    "DateLastModified": "Nov 10, 2022, 09:03 PM",
+    "Description": "DynamoDB Single Table Design for the Lunch Application",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "LunchTable",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "UserId",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "CommentId",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "TransactionId",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "LunchId",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Date",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Cost",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "State",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Amount",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "FirstName",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "LastName",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "EmailAddress",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Password",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Enabled",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Balance",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "Text",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Edited",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Deleted",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Type",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ParrentId",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI2PK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI2SK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI3PK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI3SK",
+          "AttributeType": "S"
+        }
+      ],
+      "TableFacets": [
+        {
+          "FacetName": "LunchItem",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "LunchId",
+            "SortKeyAlias": "LunchDate"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "LUNCH#123456"
+              },
+              "SK": {
+                "S": "LUNCH#2022-11-09"
+              },
+              "LunchId": {
+                "S": "LUNCH#123456"
+              },
+              "Date": {
+                "S": "2022-11-09"
+              },
+              "Cost": {
+                "N": "123.45"
+              },
+              "State": {
+                "S": "DONE"
+              },
+              "Type": {
+                "S": "LUNCH"
+              }
+            },
+            {
+              "PK": {
+                "S": "LUNCH#234567"
+              },
+              "SK": {
+                "S": "LUNCH#2022-11-11"
+              },
+              "LunchId": {
+                "S": "LUNCH#234567"
+              },
+              "Date": {
+                "S": "2022-11-11"
+              },
+              "Cost": {
+                "N": "23.45"
+              },
+              "State": {
+                "S": "PLANNED"
+              },
+              "Type": {
+                "S": "LUNCH"
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "LunchId",
+            "Date",
+            "Cost",
+            "State",
+            "Type"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "UserItem",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "UserID",
+            "SortKeyAlias": "UserEmailAddress"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "USER#1234"
+              },
+              "SK": {
+                "S": "USER#awassink@quintor.nl"
+              },
+              "UserId": {
+                "S": "USER#1234"
+              },
+              "FirstName": {
+                "S": "Arjen"
+              },
+              "LastName": {
+                "S": "Wassink"
+              },
+              "EmailAddress": {
+                "S": "awassink@quintor.nl"
+              },
+              "Password": {
+                "S": "KjDoDkShLDI"
+              },
+              "Enabled": {
+                "S": "TRUE"
+              },
+              "Balance": {
+                "N": "10.00"
+              },
+              "Type": {
+                "S": "USER"
+              }
+            },
+            {
+              "PK": {
+                "S": "USER#2345"
+              },
+              "SK": {
+                "S": "USER#lpook@quintor.nl"
+              },
+              "UserId": {
+                "S": "USER#2345"
+              },
+              "FirstName": {
+                "S": "Luuk"
+              },
+              "LastName": {
+                "S": "Pook"
+              },
+              "EmailAddress": {
+                "S": "lpook@quintor.nl"
+              },
+              "Password": {
+                "S": "KLhcdyusBSTm"
+              },
+              "Enabled": {
+                "S": "TRUE"
+              },
+              "Balance": {
+                "N": "5.67"
+              },
+              "Type": {
+                "S": "USER"
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "UserId",
+            "FirstName",
+            "LastName",
+            "EmailAddress",
+            "Password",
+            "Balance",
+            "Type",
+            "Enabled"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "LunchEntryItem",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "UserId",
+            "SortKeyAlias": "TransactionId"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "USER#1234"
+              },
+              "SK": {
+                "S": "TRANSACTION#LUNCHENTRY#998877"
+              },
+              "TransactionId": {
+                "S": "TRANSACTION#LUNCHENTRY#998877"
+              },
+              "LunchId": {
+                "S": "LUNCH#123456"
+              },
+              "Date": {
+                "S": "2022-11-07"
+              },
+              "State": {
+                "S": "APPROVED"
+              },
+              "Amount": {
+                "N": "1.45"
+              },
+              "Type": {
+                "S": "TRANSACTION#LUNCHENTRY"
+              },
+              "GSI2PK": {
+                "S": "USER#1234"
+              },
+              "GSI2SK": {
+                "S": "APPROVED#TRANSACTION#LUNCHENTRY#998877"
+              },
+              "GSI3PK": {
+                "S": "LUNCH#123456"
+              },
+              "GSI3SK": {
+                "S": "TRANSACTION#LUNCHENTRY#998877"
+              }
+            },
+            {
+              "PK": {
+                "S": "USER#1234"
+              },
+              "SK": {
+                "S": "TRANSACTION#LUNCHENTRY#887766"
+              },
+              "TransactionId": {
+                "S": "TRANSACTION#LUNCHENTRY#887766"
+              },
+              "LunchId": {
+                "S": "LUNCH#234567"
+              },
+              "Date": {
+                "S": "2022-11-09"
+              },
+              "State": {
+                "S": "PENDING"
+              },
+              "Amount": {
+                "N": "2.05"
+              },
+              "Type": {
+                "S": "TRANSACTION#LUNCHENTRY"
+              },
+              "GSI2PK": {
+                "S": "USER#1234"
+              },
+              "GSI2SK": {
+                "S": "PENDING#TRANSACTION#LUNCHENTRY#887766"
+              },
+              "GSI3PK": {
+                "S": "LUNCH#234567"
+              },
+              "GSI3SK": {
+                "S": "TRANSACTION#LUNCHENTRY#887766"
+              }
+            },
+            {
+              "PK": {
+                "S": "USER#2345"
+              },
+              "SK": {
+                "S": "TRANSACTION#LUNCHENTRY#776655"
+              },
+              "TransactionId": {
+                "S": "TRANSACTION#LUNCHENTRY#776655"
+              },
+              "LunchId": {
+                "S": "LUNCH#123456"
+              },
+              "Date": {
+                "S": "2022-11-06"
+              },
+              "State": {
+                "S": "PENDING"
+              },
+              "Amount": {
+                "N": "1.45"
+              },
+              "Type": {
+                "S": "TRANSACTION#LUNCHENTRY"
+              },
+              "GSI2PK": {
+                "S": "USER#2345"
+              },
+              "GSI2SK": {
+                "S": "PENDING#TRANSACTION#LUNCHENTRY#776655"
+              },
+              "GSI3PK": {
+                "S": "LUNCH#123456"
+              },
+              "GSI3SK": {
+                "S": "TRANSACTION#LUNCHENTRY#776655"
+              }
+            },
+            {
+              "PK": {
+                "S": "USER#2345"
+              },
+              "SK": {
+                "S": "TRANSACTION#LUNCHENTRY#665544"
+              },
+              "TransactionId": {
+                "S": "TRANSACTION#LUNCHENTRY#665544"
+              },
+              "LunchId": {
+                "S": "LUNCH#234567"
+              },
+              "Date": {
+                "S": "2022-11-08"
+              },
+              "State": {
+                "S": "APPROVED"
+              },
+              "Amount": {
+                "N": "2.05"
+              },
+              "Type": {
+                "S": "TRANSACTION#LUNCHENTRY"
+              },
+              "GSI2PK": {
+                "S": "USER#2345"
+              },
+              "GSI2SK": {
+                "S": "APPROVED#TRANSACTION#LUNCHENTRY#665544"
+              },
+              "GSI3PK": {
+                "S": "LUNCH#234567"
+              },
+              "GSI3SK": {
+                "S": "TRANSACTION#LUNCHENTRY#665544"
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "TransactionId",
+            "LunchId",
+            "Date",
+            "State",
+            "Amount",
+            "Type",
+            "GSI2PK",
+            "GSI2SK",
+            "GSI3PK",
+            "GSI3SK"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "GroceryItem",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "UserId",
+            "SortKeyAlias": "TransactionId"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "USER#1234"
+              },
+              "SK": {
+                "S": "TRANSACTION#GROCERY#554433"
+              },
+              "TransactionId": {
+                "S": "TRANSACTION#LUNCHENTRY#554433"
+              },
+              "Date": {
+                "S": "2022-11-07"
+              },
+              "State": {
+                "S": "APPROVED"
+              },
+              "Amount": {
+                "N": "3.10"
+              },
+              "Type": {
+                "S": "TRANSACTION#GROCERY"
+              },
+              "GSI2PK": {
+                "S": "USER#1234"
+              },
+              "GSI2SK": {
+                "S": "APPROVED#TRANSACTION#GROCERY#554433"
+              }
+            },
+            {
+              "PK": {
+                "S": "USER#2345"
+              },
+              "SK": {
+                "S": "TRANSACTION#GROCERY#443322"
+              },
+              "TransactionId": {
+                "S": "TRANSACTION#LUNCHENTRY#443322"
+              },
+              "Date": {
+                "S": "2022-11-09"
+              },
+              "State": {
+                "S": "PENDING"
+              },
+              "Amount": {
+                "N": "2.56"
+              },
+              "Type": {
+                "S": "TRANSACTION#GROCERY"
+              },
+              "GSI2PK": {
+                "S": "USER#2345"
+              },
+              "GSI2SK": {
+                "S": "PENDING#TRANSACTION#GROCERY#443322"
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "TransactionId",
+            "Date",
+            "State",
+            "Amount",
+            "Type",
+            "GSI2PK",
+            "GSI2SK",
+            "GSI3PK",
+            "GSI3SK"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "CommentItem",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "ParentId",
+            "SortKeyAlias": "CommentId"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "TRANSACTION#GROCERY#554433"
+              },
+              "SK": {
+                "S": "COMMENT#123456"
+              },
+              "UserId": {
+                "S": "USER#1234"
+              },
+              "CommentId": {
+                "S": "COMMENT#123456"
+              },
+              "Date": {
+                "S": "2022-11-07"
+              },
+              "EmailAddress": {
+                "S": "awassink@quintor.nl"
+              },
+              "Text": {
+                "S": "Graag carpaccio voor op brood"
+              },
+              "Edited": {
+                "S": "FALSE"
+              },
+              "Deleted": {
+                "S": "FALSE"
+              },
+              "Type": {
+                "S": "COMMENT"
+              },
+              "ParrentId": {
+                "S": "TRANSACTION#GROCERY#554433"
+              }
+            },
+            {
+              "PK": {
+                "S": "TRANSACTION#GROCERY#443322"
+              },
+              "SK": {
+                "S": "COMMENT#234567"
+              },
+              "UserId": {
+                "S": "USER#2345"
+              },
+              "CommentId": {
+                "S": "COMMENT#234567"
+              },
+              "Date": {
+                "S": "2022-11-09"
+              },
+              "EmailAddress": {
+                "S": "lpook@quintor.nl"
+              },
+              "Text": {
+                "S": "Ik kan niet zonder Nutella"
+              },
+              "Edited": {
+                "S": "FALSE"
+              },
+              "Deleted": {
+                "S": "FALSE"
+              },
+              "Type": {
+                "S": "COMMENT"
+              },
+              "ParrentId": {
+                "S": "TRANSACTION#GROCERY#443322"
+              }
+            },
+            {
+              "PK": {
+                "S": "COMMENT#123456"
+              },
+              "SK": {
+                "S": "COMMENT#345678"
+              },
+              "UserId": {
+                "S": "USER#2345"
+              },
+              "CommentId": {
+                "S": "COMMENT#345678"
+              },
+              "Date": {
+                "S": "2022-11-08"
+              },
+              "EmailAddress": {
+                "S": "lpook@quintor.nl"
+              },
+              "Text": {
+                "S": "Dat is lekker :-)"
+              },
+              "Edited": {
+                "S": "TRUE"
+              },
+              "Deleted": {
+                "S": "FALSE"
+              },
+              "Type": {
+                "S": "COMMENT"
+              },
+              "ParrentId": {
+                "S": "COMMENT#123456"
+              }
+            },
+            {
+              "PK": {
+                "S": "COMMENT#234567"
+              },
+              "SK": {
+                "S": "COMMENT#456789"
+              },
+              "UserId": {
+                "S": "USER#1234"
+              },
+              "CommentId": {
+                "S": "COMMENT#456789"
+              },
+              "Date": {
+                "S": "2022-11-10"
+              },
+              "EmailAddress": {
+                "S": "awassink@quintor.nl"
+              },
+              "Text": {
+                "S": "Je hebt helemaal gelijk!"
+              },
+              "Edited": {
+                "S": "FALSE"
+              },
+              "Deleted": {
+                "S": "TRUE"
+              },
+              "Type": {
+                "S": "COMMENT"
+              },
+              "ParrentId": {
+                "S": "COMMENT#234567"
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "UserId",
+            "CommentId",
+            "Date",
+            "EmailAddress",
+            "Text",
+            "Type",
+            "ParrentId",
+            "Edited",
+            "Deleted"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI1",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "SK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "PK",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        },
+        {
+          "IndexName": "GSI2",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "GSI2PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "GSI2SK",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        },
+        {
+          "IndexName": "GSI3",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "GSI3PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "GSI3SK",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}

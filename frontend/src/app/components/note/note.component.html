@@ -1,0 +1,19 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Note {{ note.NoteID }}</mat-card-title>
+        <mat-card-subtitle>Tag: {{ note.Tag }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <div *ngIf="this.editing == false">
+            {{ note.Tekst }}
+        </div>
+        <div *ngIf="this.editing == true">
+            <textarea matInput [(ngModel)]="note.Tekst"></textarea>
+        </div>
+    </mat-card-content>
+    <mat-card-actions>
+        <button *ngIf="this.editing == false" mat-button (click)="edit()">Edit</button>
+        <button *ngIf="this.editing == true" mat-button (click)="save()">Save</button>
+        <button mat-button (click)="delete()">Delete</button>
+    </mat-card-actions>
+</mat-card>

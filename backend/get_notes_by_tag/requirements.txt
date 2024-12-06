@@ -1,0 +1,3 @@
+aws-xray-sdk==2.4.3
+aws-psycopg2==1.3.8
+ssm-parameter-store==19.11.0

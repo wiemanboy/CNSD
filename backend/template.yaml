@@ -1,0 +1,575 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Sample SAM Template for notes CRUD lambda's
+
+Globals:
+  Function:
+    Timeout: 50
+    Runtime: python3.9
+    Tracing: Active
+
+Parameters:
+  TableName:
+    Type: String
+    Default: 'simplechat_connections'
+    Description: (Required) The name of the new DynamoDB to store connection identifiers for each connected clients. Minimum 3 characters
+    MinLength: 3
+    MaxLength: 50
+    AllowedPattern: ^[A-Za-z_]+$
+    ConstraintDescription: 'Required. Can be characters and underscore only. No numbers or special characters allowed.'
+  LabRole:
+    Type: String
+    Default: 'arn:aws:iam::609255357834:role/LabRole'
+
+
+Resources:
+## Functions
+  NotesRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ./swagger-spec.json
+      TracingEnabled: true
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          LoggingLevel: INFO
+          MetricsEnabled: true
+      AccessLogSetting:
+        DestinationArn: !GetAtt AccessLogGroup.Arn
+        Format: '{"requestTime":"$context.requestTime","requestId":"$context.requestId","httpMethod":"$context.httpMethod","path":"$context.path","routeKey":"$context.routeKey","status":$context.status,"responseLatency":$context.responseLatency}'
+  AccessLogGroup:
+    Type: AWS::Logs::LogGroup
+  GetNotesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.9
+      Tracing: Active
+      CodeUri: get_notes/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::609255357834:role/LabRole
+      Events:
+        GetNotes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /users/{user_id}/notes
+            Method: get
+  PostNoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.9
+      Tracing: Active
+      CodeUri: post_note/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::609255357834:role/LabRole
+      Events:
+        NotesApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /users/{user_id}/notes
+            Method: post
+  GetNoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.9
+      Tracing: Active
+      CodeUri: get_note/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::609255357834:role/LabRole
+      Events:
+        GetNotes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /users/{user_id}/notes/{note_id}
+            Method: get
+  GetNotesByTagFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.9
+      Tracing: Active
+      CodeUri: get_notes_by_tag/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::609255357834:role/LabRole
+      Events:
+        GetNotes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /users/{user_id}/tags/{tag}/notes
+            Method: get
+  PutNoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.9
+      Tracing: Active
+      CodeUri: put_note/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::609255357834:role/LabRole
+      Events:
+        NotesApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /users/{user_id}/notes/{note_id}
+            Method: put
+  DeleteNoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.9
+      Tracing: Active
+      CodeUri: delete_note/
+      Handler: app.lambda_handler
+      Role: arn:aws:iam::609255357834:role/LabRole
+      Events:
+        NotesApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref "NotesRestApi"
+            Path: /users/{user_id}/notes/{note_id}
+            Method: delete
+  OnConnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: onconnect/
+      Handler: app.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Role: !Ref LabRole
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+  OnDisconnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ondisconnect/
+      Handler: app.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Role: !Ref LabRole
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+  SendMessageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: sendmessage/
+      Handler: app.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Role: !Ref LabRole
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+  HandleDynamoDBStreamFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handle_dynamodb_stream/
+      Handler: app.lambda_handler
+      MemorySize: 256
+      Runtime: python3.9
+      Role: !Ref LabRole
+      Policies: AWSLambdaDynamoDBExecutionRole
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt NotesDynamoDBTable.StreamArn
+            BatchSize: 100
+            StartingPosition: TRIM_HORIZON
+  NotifyClientsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: notify_clients/
+      Handler: app.lambda_handler
+      MemorySize: 256
+      Runtime: python3.9
+      Role: !Ref LabRole
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+
+## DynamoDB Tables
+  NotesDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: notes_sam_2_4_3
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: Tag-GSI
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+  ConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "connectionId"
+          AttributeType: "S"
+        - AttributeName: "userId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "connectionId"
+          KeyType: "HASH"
+        - AttributeName: "userId"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: True
+      TableName: !Ref TableName
+
+## EventBus
+  NotesEventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: notes-event-bus-2-4-3
+  EventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      EventPattern:
+        source:
+          - "custom.notes"
+        detail-type:
+          - "note_created"
+          - "note_updated"
+          - "note_deleted"
+      EventBusName: !Ref NotesEventBus
+      Targets:
+        - Arn: !GetAtt NotifyClientsFunction.Arn
+          Id: "notify-clients-function"
+
+## WebSocket
+  SimpleChatWebSocket:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: SimpleChatWebSocket
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.action"
+
+## Routes and integrations
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: $connect
+      AuthorizationType: NONE
+      OperationName: ConnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ConnectInteg
+  ConnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Connect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnConnectFunction.Arn}/invocations
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      OperationName: DisconnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref DisconnectInteg
+  DisconnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Disconnect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnDisconnectFunction.Arn}/invocations
+  SendRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: sendmessage
+      AuthorizationType: NONE
+      OperationName: SendRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref SendInteg
+  SendInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Send Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SendMessageFunction.Arn}/invocations
+  PostNoteRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: post_note
+      AuthorizationType: NONE
+      OperationName: PostNoteRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref PostNoteInteg
+  PostNoteInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Post note integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostNoteFunction.Arn}/invocations
+  PutNoteRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: put_note
+      AuthorizationType: NONE
+      OperationName: PutNoteRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref PutNoteInteg
+  PutNoteInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Put note integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PutNoteFunction.Arn}/invocations
+  GetNoteRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: get_note
+      AuthorizationType: NONE
+      OperationName: GetNoteRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref GetNoteInteg
+  GetNoteInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Get note integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetNoteFunction.Arn}/invocations
+  GetNotesRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: get_notes
+      AuthorizationType: NONE
+      OperationName: GetNotesRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref GetNotesInteg
+  GetNotesInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Get notes integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetNotesFunction.Arn}/invocations
+  DeleteNoteRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: delete_note
+      AuthorizationType: NONE
+      OperationName: DeleteNoteRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref DeleteNoteInteg
+  DeleteNoteInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Delete note integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteNoteFunction.Arn}/invocations
+
+## Deployment
+  Deployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+    - ConnectRoute
+    - SendRoute
+    - DisconnectRoute
+    - PostNoteRoute
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: Prod
+      Description: Prod Stage
+      DeploymentId: !Ref Deployment
+      ApiId: !Ref SimpleChatWebSocket
+
+## Permissions
+  OnConnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OnConnectFunction
+      Principal: apigateway.amazonaws.com
+  OnDisconnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OnDisconnectFunction
+      Principal: apigateway.amazonaws.com
+  SendMessagePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref SendMessageFunction
+      Principal: apigateway.amazonaws.com
+  PostNotePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref PostNoteFunction
+      Principal: apigateway.amazonaws.com
+  PutNotePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref PutNoteFunction
+      Principal: apigateway.amazonaws.com
+  GetNotePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetNoteFunction
+      Principal: apigateway.amazonaws.com
+  GetNotesPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetNotesFunction
+      Principal: apigateway.amazonaws.com
+  DeleteNotePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref DeleteNoteFunction
+      Principal: apigateway.amazonaws.com
+  NotifyClientsPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref NotifyClientsFunction
+      Principal: events.amazonaws.com
+
+Outputs:
+  GetNotesApi:
+    Description: "API Gateway endpoint URL for Prod stage for Notes function"
+    Value: !Sub "https://${NotesRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/notes/"
+  GetNotesFunction:
+    Description: "GetNotesFunction Function ARN"
+    Value: !GetAtt GetNotesFunction.Arn
+  GetNotesByTagFunction:
+    Description: "GetNotesByTag Function ARN"
+    Value: !GetAtt GetNotesByTagFunction.Arn
+  PostNoteFunction:
+    Description: "PostNoteFunction Function ARN"
+    Value: !GetAtt PostNoteFunction.Arn
+  GetNoteFunction:
+    Description: "GetNoteFunction Function ARN"
+    Value: !GetAtt GetNoteFunction.Arn
+  PutNoteFunction:
+    Description: "PutNoteFunction Function ARN"
+    Value: !GetAtt PutNoteFunction.Arn
+  DeleteNoteFunction:
+    Description: "DeleteNoteFunction Function ARN"
+    Value: !GetAtt DeleteNoteFunction.Arn
+  ConnectionsTable:
+    Description: "Connections table ARN"
+    Value: !GetAtt ConnectionsTable.Arn
+  NotesDynamoDBTable:
+    Description: "Notes DynamoDB table ARN"
+    Value: !GetAtt NotesDynamoDBTable.Arn
+  OnConnectFunction:
+    Description: "OnConnect function ARN"
+    Value: !GetAtt OnConnectFunction.Arn
+  OnDisconnectFunction:
+    Description: "OnDisconnect function ARN"
+    Value: !GetAtt OnDisconnectFunction.Arn
+  SendMessageFunction:
+    Description: "SendMessage function ARN"
+    Value: !GetAtt SendMessageFunction.Arn
+  NotifyClientsFunction:
+    Description: "NotifyClients function ARN"
+    Value: !GetAtt NotifyClientsFunction.Arn
+  NotesEventBus:
+    Description: "Notes Event Bus ARN"
+    Value: !GetAtt NotesEventBus.Arn
+  WebSocketURI:
+    Description: "The WSS Protocol URI to connect to"
+    Value: !Join [ '', [ 'wss://', !Ref SimpleChatWebSocket, '.execute-api.',!Ref 'AWS::Region','.amazonaws.com/',!Ref 'Stage' ] ]

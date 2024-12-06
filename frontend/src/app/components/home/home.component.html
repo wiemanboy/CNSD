@@ -1,0 +1,32 @@
+<div *ngIf="this.noteService.userId == 0">
+    <mat-form-field>
+        <mat-label>Enter user ID</mat-label>
+        <input matInput placeholder="UserID" [(ngModel)]="userId" name="userid" matFormFieldControl="userid">
+    </mat-form-field><br/>
+
+    <button mat-raised-button color="primary" (click)="connect()">Connect</button>
+</div>
+
+<div *ngIf="this.noteService.userId != 0">
+    <div class="container">
+        <div class="note-add">
+            <mat-form-field>
+                <mat-label>Text</mat-label>
+                <input matInput placeholder="Text" [(ngModel)]="text" name="text" matFormFieldControl="text">
+            </mat-form-field><br/>
+            <mat-form-field>
+                <mat-label>Tag</mat-label>
+                <input matInput placeholder="Tag" [(ngModel)]="tag">
+            </mat-form-field><br/>
+            <button mat-raised-button color="primary" (click)="createNote()">Create</button>
+        </div>
+        <div class="note-overview">
+            <button mat-raised-button color="primary" (click)="getNotes()">Fetch notes</button>
+            <div class="container">
+                <app-note *ngFor="let note of this.noteService.notes | keyvalue" [note]="note.value"></app-note>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
