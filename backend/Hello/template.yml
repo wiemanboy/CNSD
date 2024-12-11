@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Go Lambda Function for API Gateway
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-Hello-world"
+      Handler: bootstrap
+      Runtime: provided.al2
+      Role: arn:aws:iam::905418229978:role/LabRole
+      Code:
+        S3Bucket: function-bucket-jarno
+        S3Key: backend/Hello/function.zip
+      Architectures:
+        - x86_64
+
+Outputs:
+  LambdaFunctionArn:
+    Description: "ARN of the Lambda Function"
+    Value: !GetAtt HelloWorldFunction.Arn
+    Export:
+      Name: LambdaFunctionArn
