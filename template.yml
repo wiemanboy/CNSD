@@ -12,7 +12,7 @@ Resources:
     Properties:
       RestApiId: !Ref ApiGatewayRestApi
       ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
-      PathPart: Hello
+      PathPart: hello
 
   ApiGatewayMethod:
     Type: AWS::ApiGateway::Method

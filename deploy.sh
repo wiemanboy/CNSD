@@ -23,13 +23,13 @@ echo "Frontend bucket name: ${FRONTEND_BUCKET}"
 
 # Upload index.html to S3
 echo "Uploading index.html to S3..."
-aws s3 cp frontend/index.html s3://"${FRONTEND_BUCKET}"/index.html
+aws s3 cp frontend/index.html s3://"${FRONTEND_BUCKET}"/index.html --force
 
 echo "index.html uploaded successfully."
 
 # Upload Go Lambda Function to S3
 echo "Uploading Lambda function to S3..."
-aws s3 cp backend/Hello/function.zip s3://${LAMBDA_BUCKET}/backend/Hello/function.zip
+aws s3 cp backend/Hello/function.zip s3://${LAMBDA_BUCKET}/backend/Hello/function.zip --force
 
 echo "Lambda function uploaded successfully."
 

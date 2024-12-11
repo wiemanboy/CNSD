@@ -5,9 +5,9 @@ Resources:
   HelloWorldFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${AWS::StackName}-Hello-world"
+      FunctionName: !Sub "${AWS::StackName}-HelloWorldFunction"
       Handler: bootstrap
-      Runtime: provided.al2
+      Runtime: provided.al2023
       Role: arn:aws:iam::905418229978:role/LabRole
       Code:
         S3Bucket: function-bucket-jarno
