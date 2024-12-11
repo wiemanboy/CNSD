@@ -4,7 +4,6 @@ set -e  # Exit immediately if any command fails
 
 # S3 Buckets
 LAMBDA_BUCKET="function-bucket-jarno"
-FRONTEND_BUCKET="frontend-bucket-jarno"
 
 # Deploy Frontend (S3 Bucket)
 echo "Deploying Frontend..."
@@ -24,7 +23,7 @@ echo "Frontend bucket name: ${FRONTEND_BUCKET}"
 
 # Upload index.html to S3
 echo "Uploading index.html to S3..."
-aws s3 cp frontend/index.html s3://${FRONTEND_BUCKET}/index.html
+aws s3 cp frontend/index.html s3://"${FRONTEND_BUCKET}"/index.html
 
 echo "index.html uploaded successfully."
 
